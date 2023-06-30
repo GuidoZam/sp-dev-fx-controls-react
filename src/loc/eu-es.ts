@@ -382,5 +382,8 @@ TermSetNavigationNoTerms: "No terms defined",
   "DynamicFormEnterDescriptionPlaceholder": "Alternative text",
   "DynamicFormDialogValidationErrorTitle": "Validation Error",
   "DynamicFormDialogValidationErrorMessage": "There are validation errors, please fix them before saving.",
+  "DynamicFormNumberValueMustBeGreaterThan": "Value must be greater than {0}",
+  "DynamicFormNumberValueMustBeBetween": "Value must be between {0} and {1}",
+  "DynamicFormNumberValueMustBeLowerThan": "Value must be lower than {0}",
   };
 });

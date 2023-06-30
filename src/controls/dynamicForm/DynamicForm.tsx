@@ -521,6 +521,9 @@ export class DynamicForm extends React.Component<
           let richText = false;
           let dateFormat: DateFormat | undefined;
           let principalType = "";
+          let minValue: number | undefined;
+          let maxValue: number | undefined;
+          let showAsPercentage: boolean | undefined;
           if (item !== null) {
             defaultValue = item[field.EntityPropertyName];
           } else {
@@ -532,6 +535,10 @@ export class DynamicForm extends React.Component<
             });
           } else if (fieldType === "Note") {
             richText = field.RichText;
+          } else if (fieldType === "Number") {
+            minValue = field.MinimumValue;
+            maxValue = field.MaximumValue;
+            showAsPercentage = field.ShowAsPercentage;
           } else if (fieldType === "Lookup") {
             lookupListId = field.LookupList;
             lookupField = field.LookupField;
@@ -709,6 +716,9 @@ export class DynamicForm extends React.Component<
             listItemId: listItemId,
             principalType: principalType,
             description: field.Description,
+            mininumValue: minValue,
+            maximumValue: maxValue,
+            showAsPercentage: showAsPercentage,
           });
           tempFields.sort((a, b) => a.Order - b.Order);
         }

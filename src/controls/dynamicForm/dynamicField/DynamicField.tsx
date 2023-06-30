@@ -212,6 +212,7 @@ export class DynamicField extends React.Component<IDynamicFieldProps, IDynamicFi
         </div>;
 
       case 'Lookup':
+        //eslint-disable-next-line no-case-declarations
         const lookupValue = this.props.newValue ? this.props.newValue : defaultValue;
         return <div>
           <div className={styles.titleContainer}>
@@ -235,6 +236,7 @@ export class DynamicField extends React.Component<IDynamicFieldProps, IDynamicFi
         </div>;
 
       case 'LookupMulti':
+        //eslint-disable-next-line no-case-declarations
         const lookupMultiValue = this.props.newValue ? this.props.newValue : defaultValue;
         return <div>
           <div className={styles.titleContainer}>
@@ -258,6 +260,9 @@ export class DynamicField extends React.Component<IDynamicFieldProps, IDynamicFi
         </div>;
 
       case 'Number':
+        //eslint-disable-next-line no-case-declarations
+        const customNumberErrorMessage = this.getNumberErrorText();
+
         return <div>
           <div className={styles.titleContainer}>
             <Icon className={styles.fieldIcon} iconName={"NumberField"} />
@@ -271,7 +276,8 @@ export class DynamicField extends React.Component<IDynamicFieldProps, IDynamicFi
             onChange={(e, newText) => { this.onChange(newText); }}
             disabled={disabled}
             onBlur={this.onBlur}
-            errorMessage={errorText} />
+            errorMessage={customNumberErrorMessage}
+            />
           {descriptionEl}
         </div>;
 
@@ -588,6 +594,46 @@ export class DynamicField extends React.Component<IDynamicFieldProps, IDynamicFi
       changedValue
     } = this.state;
     return (changedValue === undefined || changedValue === ''|| changedValue === null || this.isEmptyArray(changedValue)) && this.props.required ? strings.DynamicFormRequiredErrorMessage : null;
+  }
+
+  private getNumberErrorText = (): string => {
+    const {
+      changedValue
+    } = this.state;
+    const {
+      maximumValue,
+      mininumValue,
+      showAsPercentage
+    } = this.props;
+
+    if ((changedValue === undefined || changedValue === '' || changedValue === null || this.isEmptyArray(changedValue)) && this.props.required) {
+      return strings.DynamicFormRequiredErrorMessage;
+    }
+
+    let minValue = mininumValue !== undefined && mininumValue !== -(Number.MAX_VALUE) ? mininumValue : undefined;
+    let maxValue = maximumValue !== undefined && maximumValue !== Number.MAX_VALUE ? maximumValue : undefined;
+
+    if (showAsPercentage === true) {
+      // In case of percentage we need to convert the min and max values to a percentage value
+      minValue = minValue !== undefined ? minValue * 100 : undefined;
+      maxValue = maxValue !== undefined ? maxValue * 100 : undefined;
+    }
+
+    if (changedValue !== undefined && changedValue !== null && changedValue.length > 0) {
+      if (minValue !== undefined && maxValue !== undefined && (changedValue < minValue || changedValue > maxValue)) {
+        return strings.DynamicFormNumberValueMustBeBetween.replace('{0}', minValue.toString()).replace('{1}', maxValue.toString());
+      }
+      else {
+        if (minValue !== undefined && changedValue < minValue) {
+          return strings.DynamicFormNumberValueMustBeGreaterThan.replace('{0}', minValue.toString());
+        }
+        else if (maxValue !== undefined && changedValue > maxValue) {
+          return strings.DynamicFormNumberValueMustBeLowerThan.replace('{0}', maxValue.toString());
+        }
+      }
+    }
+
+    return null;
   }
 
   private isEmptyArray(value): boolean {

@@ -13,7 +13,11 @@ export interface IDynamicFieldProps {
   columnInternalName: string;
   label?: string;
   placeholder?: string;
-  onChanged?: (columnInternalName: string, newValue: any, additionalData?: FieldChangeAdditionalData) => void; // eslint-disable-line @typescript-eslint/no-explicit-any
+  onChanged?: (
+    columnInternalName: string,
+    newValue: any,
+    additionalData?: FieldChangeAdditionalData
+  ) => void; // eslint-disable-line @typescript-eslint/no-explicit-any
   value?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
   required: boolean;
   newValue?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -32,6 +36,9 @@ export interface IDynamicFieldProps {
   dateFormat?: DateFormat;
   firstDayOfWeek: number;
   additionalData?: FieldChangeAdditionalData;
-  principalType?:string;
+  principalType?: string;
   description?: string;
+  mininumValue?: number;
+  maximumValue?: number;
+  showAsPercentage?: boolean;
 }
