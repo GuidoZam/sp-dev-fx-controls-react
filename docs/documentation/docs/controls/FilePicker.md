@@ -72,21 +72,18 @@ The FilePicker component can be configured with the following properties:
 
 | Property | Type | Required | Description |
 | ---- | ---- | ---- | ---- |
-| label | string | no | Specifies the text describing the file picker. |
+| accepts | string[] | no | Array of strings containing allowed files extensions. E.g. [".gif", ".jpg", ".jpeg", ".bmp", ".dib", ".tif", ".tiff", ".ico", ".png", ".jxr", ".svg"] |
+| allowExternalLinks | boolean | no | Specifies if external links should be allowed. |
+| bingAPIKey | string | no | Used to execute WebSearch. If not provided SearchTab will not be available. The API key can be created on a Azure account ([Bing image search API](https://www.microsoft.com/en-us/bing/apis/bing-image-search-api)), a free version exist for 1000 query per month ([Pricing](https://www.microsoft.com/en-us/bing/apis/pricing)) |
+| buttonClassName | string | no | Specifies the ClassName to be applied to the opener button element. |
 | buttonLabel | string | no | Specifies the label of the file picker button. |
 | buttonIcon | string | no | In case it is provided the file picker will be rendered as an action button. |
 | buttonIconProps | IIconProps | no | In case it is provided the file picker will be rendered as an Icon the and all can define Properties for Icon  |
-| defaultFolderAbsolutePath | string | no | Optional string parameter to set a default active folder/library for the SiteFilesTab. E.g. `"https://contoso.sharepoint.com/teams/siteName/documentLibrary/Folder 1/SubFolder 1"`  |
-| onSave | (filePickerResult: IFilePickerResult[]) => void | yes | Handler when the file has been selected and picker has been closed. |
-| onChange | (filePickerResult: IFilePickerResult[]) => void | no | Handler when the file selection has been changed. |
-| onCancel | () => void | no | Handler when file picker has been cancelled. |
+| checkIfFileExists | boolean | no | When using file links, this property allows the user to choose if the control should check if the link point to a file that exists or not. |
 | context | BaseComponentContext | yes | Current context. |
-| accepts | string[] | no | Array of strings containing allowed files extensions. E.g. [".gif", ".jpg", ".jpeg", ".bmp", ".dib", ".tif", ".tiff", ".ico", ".png", ".jxr", ".svg"] |
-| required | boolean | no | Sets the label to inform that the value is required. |
-| bingAPIKey | string | no | Used to execute WebSearch. If not provided SearchTab will not be available. The API key can be created on a Azure account ([Bing image search API](https://www.microsoft.com/en-us/bing/apis/bing-image-search-api)), a free version exist for 1000 query per month ([Pricing](https://www.microsoft.com/en-us/bing/apis/pricing)) |
+| defaultFolderAbsolutePath | string | no | Optional string parameter to set a default active folder/library for the SiteFilesTab. E.g. `"https://contoso.sharepoint.com/teams/siteName/documentLibrary/Folder 1/SubFolder 1"`  |
 | disabled | boolean | no | Specifies if the picker button is disabled |
 | hidden | boolean | no | Specifies if the picker button is hidden (if hidden, panel visibility can still be controlled with isPanelOpen) |
-| itemsCountQueryLimit | number | no | Number of items to obtain when executing REST queries. Default 100. |
 | hideRecentTab | boolean | no | Specifies if RecentTab should be hidden. |
 | hideWebSearchTab | boolean | no | Specifies if WebSearchTab should be hidden. |
 | hideStockImages | boolean | no | Specifies if StockImagesTab should be hidden. |
@@ -96,14 +93,19 @@ The FilePicker component can be configured with the following properties:
 | hideLocalUploadTab | boolean | no | Specifies if LocalUploadTab should be hidden. |
 | hideLocalMultipleUploadTab | boolean | no | Specifies if LocalMultipleUploadTab should be hidden. |
 | hideLinkUploadTab | boolean | no | Specifies if LinkUploadTab should be hidden. |
-| storeLastActiveTab | boolean | no | Specifies if last active tab will be stored after the Upload panel has been closed. Note: the value of selected tab is stored in the queryString hash. Default `true` |
+| includePageLibraries | boolean | no | Specifies if Site Pages library to be visible on Sites tab |
 | isPanelOpen | boolean | no | Specifies if the file picker panel is open by default or not |
+| itemsCountQueryLimit | number | no | Number of items to obtain when executing REST queries. Default 100. |
+| label | string | no | Specifies the text describing the file picker. |
+| onSave | (filePickerResult: IFilePickerResult[]) => void | yes | Handler when the file has been selected and picker has been closed. |
+| onChange | (filePickerResult: IFilePickerResult[]) => void | no | Handler when the file selection has been changed. |
+| onCancel | () => void | no | Handler when file picker has been cancelled. |
+| panelClassName | string | no | Specifies the ClassName to be applied to the Panel root element. |
 | renderCustomUploadTabContent | (filePickerResult: IFilePickerResult) => JSX.Element \| null | no | Optional renderer to add custom user-defined fields to "Upload" tab |
 | renderCustomMultipleUploadTabContent | (filePickerResult: IFilePickerResult[]) => JSX.Element \| null | no | Optional renderer to add custom user-defined fields to "Multi-Upload" tab |
 | renderCustomLinkTabContent | (filePickerResult: IFilePickerResult) => JSX.Element \| null | no | Optional renderer to add custom user-defined fields to "Link" tab |
-| includePageLibraries | boolean | no | Specifies if Site Pages library to be visible on Sites tab |
-| allowExternalLinks | boolean | no | Specifies if external links should be allowed. |
-| checkIfFileExists | boolean | no | When using file links, this property allows the user to choose if the control should check if the link point to a file that exists or not. |
+| required | boolean | no | Sets the label to inform that the value is required. |
+| storeLastActiveTab | boolean | no | Specifies if last active tab will be stored after the Upload panel has been closed. Note: the value of selected tab is stored in the queryString hash. Default `true` |
 
 interface `IFilePickerResult`
 
