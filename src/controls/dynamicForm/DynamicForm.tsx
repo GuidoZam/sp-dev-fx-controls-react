@@ -28,6 +28,11 @@ import {
   DialogType,
 } from "office-ui-fabric-react/lib/Dialog";
 
+import {
+  MessageBar,
+  MessageBarType,
+} from '@fluentui/react';
+
 import "@pnp/sp/lists";
 import "@pnp/sp/content-types";
 import "@pnp/sp/folders";
@@ -100,6 +105,17 @@ export class DynamicForm extends React.Component<
 
     return (
       <div>
+        <div>
+          {(this.state.errorMessage && this.state.errorMessage.length > 0) &&
+          <MessageBar
+            messageBarType={MessageBarType.error}
+            isMultiline={false}
+            onDismiss={() => this.setState({ errorMessage: undefined })}
+            dismissButtonAriaLabel="Close"
+          >
+            {this.state.errorMessage}
+          </MessageBar>}
+        </div>
         {fieldCollection.length === 0 ? (
           <div>
             <ProgressIndicator
@@ -207,11 +223,11 @@ export class DynamicForm extends React.Component<
             val.fieldDefaultValue = null;
             shouldBeReturnBack = true;
           }
-        } 
+        }
         if (val.fieldType === "Number") {
           if (val.showAsPercentage) val.newValue /= 100;
           if (this.isEmptyNumOrString(val.newValue) && (val.minimumValue !== null || val.maximumValue !== null)) {
-            val.newValue = val.fieldDefaultValue = null; 
+            val.newValue = val.fieldDefaultValue = null;
           }
           if (!this.isEmptyNumOrString(val.newValue) && (isNaN(Number(val.newValue)) || (val.newValue < val.minimumValue) || (val.newValue > val.maximumValue))) {
             shouldBeReturnBack = true;
@@ -331,6 +347,9 @@ export class DynamicForm extends React.Component<
           if (onSubmitError) {
             onSubmitError(objects, error);
           }
+          this.setState({
+            errorMessage: strings.DynamicFormErrorUpdatingItem
+          });
           console.log("Error", error);
         }
       }
@@ -344,7 +363,7 @@ export class DynamicForm extends React.Component<
         // We are adding a new list item
         try {
           const contentTypeIdField = "ContentTypeId";
-          //check if item contenttype is passed, then update the object with content type id, else, pass the object 
+          //check if item contenttype is passed, then update the object with content type id, else, pass the object
           if (contentTypeId !== undefined && contentTypeId.startsWith("0x01")) objects[contentTypeIdField] = contentTypeId;
           const iar = await sp.web.lists.getById(listId).items.add(objects);
           if (onSubmitted) {
@@ -359,6 +378,9 @@ export class DynamicForm extends React.Component<
           if (onSubmitError) {
             onSubmitError(objects, error);
           }
+          this.setState({
+            errorMessage: strings.DynamicFormErrorAddingItem
+          });
           console.log("Error", error);
         }
       }
@@ -399,13 +421,16 @@ export class DynamicForm extends React.Component<
             }
           } else {
             throw new Error(
-              "Unable to read the ID of the just created folder or Document Set"
+              strings.DynamicFormErrorReadingIDOfNewItem
             );
           }
         } catch (error) {
           if (onSubmitError) {
             onSubmitError(objects, error);
           }
+          this.setState({
+            errorMessage: error.message
+          });
           console.log("Error", error);
         }
       }
@@ -418,7 +443,10 @@ export class DynamicForm extends React.Component<
       if (onSubmitError) {
         onSubmitError(null, error);
       }
-      console.log(`Error onSubmit`, error);
+      this.setState({
+        errorMessage: strings.DynamicFormErrorOnSubmit
+      });
+      console.log(strings.DynamicFormErrorOnSubmit, error);
     }
   };
 
@@ -512,6 +540,15 @@ export class DynamicForm extends React.Component<
         contentTypeId,
         this.webURL
       );
+
+      if (listFields === null) {
+        console.log(strings.DynamicFormErrorLoadingFieldsInformations);
+        this.setState({
+          errorMessage: strings.DynamicFormErrorLoadingFieldsInformations
+        });
+        return null;
+      }
+
       const tempFields: IDynamicFieldProps[] = [];
       let order: number = 0;
       const responseValue = listFields.value;
@@ -706,8 +743,8 @@ export class DynamicForm extends React.Component<
             defaultValue = JSON.parse(defaultValue);
           } else if (fieldType === "Boolean") {
             defaultValue = Boolean(Number(defaultValue));
-          } 
-          
+          }
+
           tempFields.push({
             newValue: null,
             fieldTermSetId: termSetId,
@@ -748,7 +785,7 @@ export class DynamicForm extends React.Component<
 
       let installedLanguages: IInstalledLanguageInfo[];
       if (tempFields.filter(f => f.fieldType === "Currency").length > 0) {
-        installedLanguages = await sp.web.regionalSettings.getInstalledLanguages();        
+        installedLanguages = await sp.web.regionalSettings.getInstalledLanguages();
       }
 
       this.setState({ fieldCollection: tempFields, installedLanguages, etag });

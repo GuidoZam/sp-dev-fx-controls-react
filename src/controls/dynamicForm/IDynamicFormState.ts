@@ -7,6 +7,7 @@ export interface IDynamicFormState {
   isSaving?: boolean;
   etag?: string;
   isValidationErrorDialogOpen: boolean;
+  errorMessage?: string;
 }
 
 

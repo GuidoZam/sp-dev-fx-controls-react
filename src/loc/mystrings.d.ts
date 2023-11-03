@@ -372,6 +372,11 @@ declare interface IControlStrings {
   DynamicFormNumberValueMustBeGreaterThan: string;
   DynamicFormNumberValueMustBeBetween: string;
   DynamicFormNumberValueMustBeLowerThan: string;
+  DynamicFormErrorUpdatingItem: string;
+  DynamicFormErrorAddingItem: string;
+  DynamicFormErrorReadingIDOfNewItem: string;
+  DynamicFormErrorOnSubmit: string;
+  DynamicFormErrorLoadingFieldsInformations: string;
 
   // Location picker
   customDisplayName: string;

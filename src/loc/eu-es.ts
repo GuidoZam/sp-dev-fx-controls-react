@@ -385,5 +385,10 @@ TermSetNavigationNoTerms: "No terms defined",
   "DynamicFormNumberValueMustBeGreaterThan": "Balioak {0} baino handiagoa izan behar du",
   "DynamicFormNumberValueMustBeBetween": "Balioak {0} eta {1} artean egon behar du",
   "DynamicFormNumberValueMustBeLowerThan": "Balioak {0} baino txikiagoa izan behar du",
+  "DynamicFormErrorUpdatingItem": "Errore bat gertatu da elementua eguneratzean",
+  "DynamicFormErrorAddingItem": "Errore bat gertatu da elementu berria gehitzean",
+  "DynamicFormErrorReadingIDOfNewItem": "Ezin da sortu berri den karpetaren edo dokumentu multzoaren IDa irakurri",
+  "DynamicFormErrorOnSubmit": "Errore bat bidaltzean",
+  "DynamicFormErrorLoadingFieldsInformations": "Errore bat gertatu da eremuen informazioa kargatzean",
   };
 });
