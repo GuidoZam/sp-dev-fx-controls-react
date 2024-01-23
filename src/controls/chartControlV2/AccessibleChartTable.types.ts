@@ -1,5 +1,4 @@
-import { ChartData, ChartOptions } from 'chart.js-old';
-import { ChartType } from './ChartControl.types';
+import { ChartData, ChartOptions, DefaultDataPoint, ChartType } from "chart.js";
 
 /**
  * The properties for the Accessible Chart Table object
@@ -24,9 +23,9 @@ export interface IAccessibleChartTableProps {
 
   /**
   The data to be displayed in the chart
-  @type {IChartData}
+  @type {ChartData<ChartType, DefaultDataPoint<ChartType>, unknown>}
   */
-  data?: ChartData;
+  data?: ChartData<ChartType, DefaultDataPoint<ChartType>, unknown>;
 
   /**
   The options for the chart
@@ -35,8 +34,8 @@ export interface IAccessibleChartTableProps {
   chartOptions?: ChartOptions & {};
 
   /**
-   The type of chart to render
-   @type {ChartType}
+  The type of chart to render
+  @type {ChartType}
    */
   chartType: ChartType;
 

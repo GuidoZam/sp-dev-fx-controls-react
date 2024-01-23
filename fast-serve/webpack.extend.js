@@ -7,8 +7,7 @@
 // you can add your project related webpack configuration here, it will be merged using webpack-merge module
 // i.e. plugins: [new webpack.Plugin()]
 const webpackConfig = {
-
-}
+};
 
 // for even more fine-grained control, you can apply custom webpack settings using below function
 const transformConfig = function (initialWebpackConfig) {

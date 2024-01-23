@@ -1,9 +1,9 @@
-export type ValidControls = "all" | 
-  "accessibleAccordion" | "adaptiveCardDesignerHost" | "adaptiveCardHost" | 
-  "animatedDialog" | "Carousel" | "ChartControl" | 
-  "ComboBoxListItemPicker" | "Dashboard" | "DateTimePicker" | 
-  "DragDropFiles" | "DynamicForm" | "EnhancedThemeProvider" | 
-  "FieldCollectionData" | "FieldPicker" | "FilePicker" | 
+export type ValidControls = "all" |
+  "accessibleAccordion" | "adaptiveCardDesignerHost" | "adaptiveCardHost" |
+  "animatedDialog" | "Carousel" | "ChartControl" | "ChartControlOld" |
+  "ComboBoxListItemPicker" | "Dashboard" | "DateTimePicker" |
+  "DragDropFiles" | "DynamicForm" | "EnhancedThemeProvider" |
+  "FieldCollectionData" | "FieldPicker" | "FilePicker" |
   "FileTypeIcon" | "FolderExplorer" | "FolderPicker" |
   "GridLayout" | "IconPicker" | "IFrameDialog" |
   "IFramePanel" | "ListPicker" | "ListItemPicker" |

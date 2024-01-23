@@ -23,6 +23,39 @@ if (process.argv.indexOf('--size') !== -1) {
     additionalConfiguration: generatedConfiguration => {
       generatedConfiguration.plugins.push(new BundleAnalyzerPlugin());
 
+      generatedConfiguration.module.rules.push({
+        test: /\.[cm]?js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env"],
+          },
+        },
+      });
+
+      // generatedConfiguration.module.rules.push({
+      //   test: /\.[cm]?js$/,
+      //   exclude:
+      //     /node_modules\/(?!(contentful\/dist|@contentful\/live-preview)\/).*/,
+      //   use: {
+      //     loader: "babel-loader",
+      //     options: {
+      //       presets: [
+      //         [
+      //           "@babel/preset-env",
+      //           {
+      //             targets: {
+      //               browsers: ["last 2 versions", "ie >= 11"],
+      //             },
+      //           },
+      //         ],
+      //       ],
+      //       plugins: ["@babel/plugin-proposal-class-properties"],
+      //     },
+      //   },
+      // });
+
       return generatedConfiguration;
     }
   });
