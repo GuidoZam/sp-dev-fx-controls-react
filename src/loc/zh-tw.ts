@@ -55,6 +55,7 @@ define([], () => {
   "PeoplePickerGroupNotFound": "找不到組。",
   "genericNoResultsFoundText": "未找到結果",
   "ListItemPickerSelectValue": "選擇值",
+  "ListItemPickerRequiredErrorMessage": "必要欄位",
   "ListItemAttachmentsActionDeleteIconTitle": "刪除",
   "ListItemAttachmentsactionDeleteTitle": "刪除",
   "ListItemAttachmentsfileDeletedMsg": "檔{0}刪除",

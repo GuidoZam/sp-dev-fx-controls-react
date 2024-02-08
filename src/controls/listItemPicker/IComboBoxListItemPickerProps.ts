@@ -35,4 +35,5 @@ export interface IComboBoxListItemPickerProps {
     label?: string;
     orderBy?:string;
     styles?: IComboBoxStyles;
+    required?: boolean;
 }

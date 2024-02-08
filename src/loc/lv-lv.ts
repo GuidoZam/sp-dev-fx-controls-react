@@ -55,6 +55,7 @@ define([], () => {
   "PeoplePickerGroupNotFound": "Grupu nevarēja atrast.",
   "genericNoResultsFoundText": "Nav atrasti rezultāti",
   "ListItemPickerSelectValue": "Atlasiet vērtību",
+  "ListItemPickerRequiredErrorMessage": "Obligāts lauks",
   "ListItemAttachmentsActionDeleteIconTitle": "Dzēst",
   "ListItemAttachmentsactionDeleteTitle": "Dzēst",
   "ListItemAttachmentsfileDeletedMsg": "Fails {0} dzēsts",

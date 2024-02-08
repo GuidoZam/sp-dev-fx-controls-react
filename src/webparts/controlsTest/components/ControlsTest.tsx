@@ -962,14 +962,14 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
         </div>
         <div id="DynamicFormDiv" className={styles.container} hidden={!controlVisibility.DynamicForm}>
           <div className="ms-font-m">
-            <DynamicForm 
-              key={this.props.dynamicFormListId} 
-              context={this.props.context} 
-              listId={this.props.dynamicFormListId} 
-              listItemId={dynamicFormListItemId} 
+            <DynamicForm
+              key={this.props.dynamicFormListId}
+              context={this.props.context}
+              listId={this.props.dynamicFormListId}
+              listItemId={dynamicFormListItemId}
               validationErrorDialogProps={this.props.dynamicFormErrorDialogEnabled ? { showDialogOnValidationError: true } : undefined}
               returnListItemInstanceOnSubmit={true}
-              onCancelled={() => { console.log('Cancelled'); }} 
+              onCancelled={() => { console.log('Cancelled'); }}
               onSubmitted={async (data, item) => { let itemdata = await item.get(); console.log('Saved item', itemdata)}}
               useClientSideValidation={this.props.dynamicFormClientSideValidationEnabled}
               useFieldValidation={this.props.dynamicFormFieldValidationEnabled}
@@ -1557,16 +1557,17 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
         <div id="ListItemPickerDiv" className={styles.container} hidden={!controlVisibility.ListItemPicker}>
           <div className="ms-font-m">List Item picker list data tester:
 
-            <ListItemPicker listId={'b1416fca-dc77-4198-a082-62a7657dcfa9'}
-              columnInternalName="DateAndTime"
+            <ListItemPicker listId={'c91e7ea6-6a22-49d5-8deb-44a577bab31d'}
+              columnInternalName="LinkFilename"
               keyColumnInternalName="Id"
               // filter={"Title eq 'SPFx'"}
-              orderBy={'Title desc'}
-              itemLimit={5}
+              //orderBy={'LinkFilename desc'}
+              itemLimit={1}
               context={this.props.context}
               placeholder={'Select list items'}
-              onSelectedItem={this.listItemPickerDataSelected} />
-
+              onSelectedItem={this.listItemPickerDataSelected}
+              enableDefaultSuggestions={true}
+              required={true} />
           </div>
         </div>
 
@@ -2589,5 +2590,5 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
 
   // private _onFolderSelect = (folder: IFolder): void => {
   //   console.log('selected folder', folder);
-  // 
+  //
 }

@@ -55,6 +55,7 @@ define([], () => {
   "PeoplePickerGroupNotFound": "Không tìm thấy nhóm.",
   "genericNoResultsFoundText": "Không tìm thấy kết quả",
   "ListItemPickerSelectValue": "Chọn giá trị",
+  "ListItemPickerRequiredErrorMessage": "Trường bắt buộc.",
   "ListItemAttachmentsActionDeleteIconTitle": "Xóa",
   "ListItemAttachmentsactionDeleteTitle": "Xóa",
   "ListItemAttachmentsfileDeletedMsg": "Xóa {0} tệp",

@@ -53,6 +53,7 @@ define([], () => {
     PeoplePickerGroupNotFound: "Grupo não encontrado.",
     genericNoResultsFoundText: 'Nenhum resultado encontrado',
     ListItemPickerSelectValue: 'Selecione o valor',
+    ListItemPickerRequiredErrorMessage: "Campo obrigatório",
     ListItemAttachmentsActionDeleteIconTitle: 'Excluir',
     ListItemAttachmentsactionDeleteTitle: 'Excluir',
     ListItemAttachmentsfileDeletedMsg: 'Arquivo {0} excluído',

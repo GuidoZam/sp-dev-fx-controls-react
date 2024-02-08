@@ -55,6 +55,7 @@ define([], () => {
   "PeoplePickerGroupNotFound": "Δεν ήταν δυνατή η εύρεση της ομάδας.",
   "genericNoResultsFoundText": "Δεν βρέθηκαν αποτελέσματα",
   "ListItemPickerSelectValue": "Επιλογή τιμής",
+  "ListItemPickerRequiredErrorMessage": "Απαιτείται τιμή",
   "ListItemAttachmentsActionDeleteIconTitle": "Διαγράψετε",
   "ListItemAttachmentsactionDeleteTitle": "Διαγράψετε",
   "ListItemAttachmentsfileDeletedMsg": "Το αρχείο {0} διαγραφεί",

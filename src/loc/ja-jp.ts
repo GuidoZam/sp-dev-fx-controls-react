@@ -55,6 +55,7 @@ define([], () => {
   "PeoplePickerGroupNotFound": "グループが見つかりませんでした。",
   "genericNoResultsFoundText": "結果が見つかりません",
   "ListItemPickerSelectValue": "値の選択",
+  "ListItemPickerRequiredErrorMessage": "必須フィールド",
   "ListItemAttachmentsActionDeleteIconTitle": "削除",
   "ListItemAttachmentsactionDeleteTitle": "削除",
   "ListItemAttachmentsfileDeletedMsg": "ファイル '{0}' は削除されました",

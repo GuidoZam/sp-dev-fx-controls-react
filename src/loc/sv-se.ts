@@ -55,6 +55,7 @@ define([], () => {
   "PeoplePickerGroupNotFound": "Gruppen kunde inte hittas.",
   "genericNoResultsFoundText": "Inga sökträffar",
   "ListItemPickerSelectValue": "Ange ett värde",
+  "ListItemPickerRequiredErrorMessage": "Obligatoriskt fält",
   "ListItemAttachmentsActionDeleteIconTitle": "Ta bort",
   "ListItemAttachmentsactionDeleteTitle": "Ta bort",
   "ListItemAttachmentsfileDeletedMsg": "Filen {0} raderades",

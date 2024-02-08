@@ -36,4 +36,9 @@ export interface IListItemPickerProps {
    enableDefaultSuggestions?: boolean;
    styles? : IBasePickerStyles;
 
+    /**
+    * Specify if value is required
+    */
+   required?: boolean;
+
 }

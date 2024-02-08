@@ -55,6 +55,7 @@ define([], () => {
   "PeoplePickerGroupNotFound": "Grupės nepavyko rasti.",
   "genericNoResultsFoundText": "Rezultatų nėra",
   "ListItemPickerSelectValue": "Pasirinkite reikšmę",
+  "ListItemPickerRequiredErrorMessage": "Privaloma pasirinkti reikšmę",
   "ListItemAttachmentsActionDeleteIconTitle": "Naikinti",
   "ListItemAttachmentsactionDeleteTitle": "Naikinti",
   "ListItemAttachmentsfileDeletedMsg": "Failas „{0}“ panaikintas",

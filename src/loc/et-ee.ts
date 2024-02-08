@@ -55,6 +55,7 @@ define([], () => {
   "PeoplePickerGroupNotFound": "Rühma ei leitud.",
   "genericNoResultsFoundText": "Tulemusi ei leitud",
   "ListItemPickerSelectValue": "Valige väärtus",
+  "ListItemPickerRequiredErrorMessage": "Väli on nõutav",
   "ListItemAttachmentsActionDeleteIconTitle": "Kustutada",
   "ListItemAttachmentsactionDeleteTitle": "Kustutada",
   "ListItemAttachmentsfileDeletedMsg": "Fail {0} kustutatud",

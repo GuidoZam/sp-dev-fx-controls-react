@@ -55,6 +55,7 @@ define([], () => {
   "PeoplePickerGroupNotFound": "Групата не може да бъде намерена.",
   "genericNoResultsFoundText": "Не са намерени резултати",
   "ListItemPickerSelectValue": "Изберете стойност",
+  "ListItemPickerRequiredErrorMessage": "Задължително поле",
   "ListItemAttachmentsActionDeleteIconTitle": "Изтриете",
   "ListItemAttachmentsactionDeleteTitle": "Изтриете",
   "ListItemAttachmentsfileDeletedMsg": "Файлът {0} изтрит",

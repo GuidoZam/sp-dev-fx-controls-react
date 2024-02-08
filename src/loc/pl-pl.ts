@@ -55,6 +55,7 @@ define([], () => {
   "PeoplePickerGroupNotFound": "Nie można odnaleźć grupy.",
   "genericNoResultsFoundText": "Nie znaleziono wyników",
   "ListItemPickerSelectValue": "Wybierz wartość",
+  "ListItemPickerRequiredErrorMessage": "Pole jest wymagane.",
   "ListItemAttachmentsActionDeleteIconTitle": "Usunąć",
   "ListItemAttachmentsactionDeleteTitle": "Usunąć",
   "ListItemAttachmentsfileDeletedMsg": "Usunięte {0} plików",

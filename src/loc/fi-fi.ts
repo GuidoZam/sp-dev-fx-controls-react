@@ -55,6 +55,7 @@ define([], () => {
   "PeoplePickerGroupNotFound": "Ryhmää ei löytynyt.",
   "genericNoResultsFoundText": "Tuloksia ei löytynyt",
   "ListItemPickerSelectValue": "Valitse arvo",
+  "ListItemPickerRequiredErrorMessage": "Kenttä on pakollinen.",
   "ListItemAttachmentsActionDeleteIconTitle": "Poista",
   "ListItemAttachmentsactionDeleteTitle": "Poista",
   "ListItemAttachmentsfileDeletedMsg": "Tiedosto {0} poistettu",

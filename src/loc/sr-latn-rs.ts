@@ -55,6 +55,7 @@ define([], () => {
   "PeoplePickerGroupNotFound": "Grupa nije mogla biti pronađena.",
   "genericNoResultsFoundText": "Nisu pronađeni rezultati",
   "ListItemPickerSelectValue": "Izaberi vrednost",
+  "ListItemPickerRequiredErrorMessage": "Zahtevano polje",
   "ListItemAttachmentsActionDeleteIconTitle": "Izbrišete",
   "ListItemAttachmentsactionDeleteTitle": "Izbrišete",
   "ListItemAttachmentsfileDeletedMsg": "Datoteka {0} izbrisana",

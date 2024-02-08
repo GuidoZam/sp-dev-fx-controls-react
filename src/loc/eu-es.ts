@@ -56,6 +56,7 @@ define([], () => {
     genericNoResultsFoundText: 'No results found',
 
     ListItemPickerSelectValue: 'Select value',
+    ListItemPickerRequiredErrorMessage: 'Required Field',
     ListItemAttachmentsActionDeleteIconTitle: 'Delete',
     ListItemAttachmentsactionDeleteTitle: 'Delete',
     ListItemAttachmentsfileDeletedMsg: 'File {0} deleted',

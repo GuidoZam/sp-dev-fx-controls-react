@@ -53,6 +53,7 @@ define([], () => {
     "PeoplePickerGroupNotFound": "Groep niet gevonden.",
     "genericNoResultsFoundText": "Geen resultaten gevonden",
     "ListItemPickerSelectValue": "Selecteer veld",
+    "ListItemPickerRequiredErrorMessage": "Verplicht veld",
     "ListItemAttachmentsActionDeleteIconTitle": "Verwijderen",
     "ListItemAttachmentsactionDeleteTitle": "Verwijderen",
     "ListItemAttachmentsfileDeletedMsg": "Bestand {0} verwijderd",

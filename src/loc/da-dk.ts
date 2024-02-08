@@ -55,6 +55,7 @@ define([], () => {
   "PeoplePickerGroupNotFound": "Gruppen blev ikke fundet.",
   "genericNoResultsFoundText": "Der blev ikke fundet nogen resultater",
   "ListItemPickerSelectValue": "Vælg værdi",
+  "ListItemPickerRequiredErrorMessage": "Påkrævet felt",
   "ListItemAttachmentsActionDeleteIconTitle": "Slette",
   "ListItemAttachmentsactionDeleteTitle": "Slette",
   "ListItemAttachmentsfileDeletedMsg": "Fil, {0} slettet",

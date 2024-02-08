@@ -55,6 +55,7 @@ define([], () => {
   "PeoplePickerGroupNotFound": "Grup bulunamadı.",
   "genericNoResultsFoundText": "Sonuç bulunamadı",
   "ListItemPickerSelectValue": "Değer seçin",
+  "ListItemPickerRequiredErrorMessage": "Bu alan gereklidir.",
   "ListItemAttachmentsActionDeleteIconTitle": "Silmek",
   "ListItemAttachmentsactionDeleteTitle": "Silmek",
   "ListItemAttachmentsfileDeletedMsg": "Dosya {0} silindi",

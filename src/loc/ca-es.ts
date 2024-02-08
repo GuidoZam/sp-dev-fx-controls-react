@@ -55,6 +55,7 @@ define([], () => {
   "PeoplePickerGroupNotFound": "No s'ha pogut trobar el grup.",
   "genericNoResultsFoundText": "No hi ha resultats trobats",
   "ListItemPickerSelectValue": "Seleccioneu valor",
+  "ListItemPickerRequiredErrorMessage": "Aquest camp és obligatori.",
   "ListItemAttachmentsActionDeleteIconTitle": "Suprimir",
   "ListItemAttachmentsactionDeleteTitle": "Suprimir",
   "ListItemAttachmentsfileDeletedMsg": "El fitxer {0} suprimit",

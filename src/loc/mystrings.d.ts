@@ -60,6 +60,7 @@ declare interface IControlStrings {
   TaxonomyPickerInvalidTerms: string;
 
   ListItemPickerSelectValue: string;
+  ListItemPickerRequiredErrorMessage: string;
 
   ListItemAttachmentsActionDeleteIconTitle: string;
   ListItemAttachmentsactionDeleteTitle: string;
@@ -356,7 +357,7 @@ declare interface IControlStrings {
   CollectionDataItemMissingFields: string;
   InvalidUrlError: string;
   CollectionDataSearch: string;
-  CollectionDataMinimumUsersDefaultMessage: string
+  CollectionDataMinimumUsersDefaultMessage: string;
 
   ViewMore: string;
 

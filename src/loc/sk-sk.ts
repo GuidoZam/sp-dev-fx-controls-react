@@ -55,6 +55,7 @@ define([], () => {
   "PeoplePickerGroupNotFound": "Skupina sa nenašla.",
   "genericNoResultsFoundText": "Nenašli sa žiadne výsledky",
   "ListItemPickerSelectValue": "Vybrať hodnotu",
+  "ListItemPickerRequiredErrorMessage": "Povinné pole",
   "ListItemAttachmentsActionDeleteIconTitle": "Odstrániť",
   "ListItemAttachmentsactionDeleteTitle": "Odstrániť",
   "ListItemAttachmentsfileDeletedMsg": "Súbor {0} odstránený",

@@ -55,6 +55,7 @@ define([], () => {
   "PeoplePickerGroupNotFound": "Imposibil de găsit grupul.",
   "genericNoResultsFoundText": "Nu s-au găsit rezultate",
   "ListItemPickerSelectValue": "Selectare valoare",
+  "ListItemPickerRequiredErrorMessage": "Câmp obligatoriu",
   "ListItemAttachmentsActionDeleteIconTitle": "Şterge",
   "ListItemAttachmentsactionDeleteTitle": "Şterge",
   "ListItemAttachmentsfileDeletedMsg": "Fișier {0} șters",

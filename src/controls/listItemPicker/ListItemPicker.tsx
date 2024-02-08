@@ -78,18 +78,25 @@ export class ListItemPicker extends React.Component<IListItemPickerProps, IListI
    * Render the field
    */
   public render(): React.ReactElement<IListItemPickerProps> {
-    const { className, disabled, itemLimit, placeholder } = this.props;
+    const { className, disabled, itemLimit, placeholder, label, required } = this.props;
     const {
       suggestionsHeaderText,
       noresultsFoundText,
-      errorMessage,
       selectedItems
     } = this.state;
 
+    let errorMessage = this.state.errorMessage;
+
+    const noItemSelected = selectedItems && selectedItems.length === 0;
+    if (noItemSelected && required) {
+        errorMessage = strings.ListItemPickerRequiredErrorMessage;
+    }
+console.log("ListItemPicker render");
+console.log(errorMessage);
     return (
       <div>
-        {!!this.props.label &&
-          <Label htmlFor={this._tagPickerId} >{this.props.label}</Label>
+        {!!label &&
+          <Label htmlFor={this._tagPickerId} required={required}>{label}</Label>
         }
         <div id={this._tagPickerId}>
           <TagPicker onResolveSuggestions={this.onFilterChanged}
