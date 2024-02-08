@@ -90,10 +90,11 @@ define([], () => {
     ListViewFilterLabel: "Filter the list",
 
     HeaderNormalText: "Normal text",
-    HeaderH2: "Heading 1",
-    HeaderH3: "Heading 2",
-    HeaderH4: "Heading 3",
+    HeaderH2: "Heading 2",
+    HeaderH3: "Heading 3",
+    HeaderH4: "Heading 4",
     HeaderBlockQuote: "Pull quote",
+    HeaderMonospaced: "Monospaced",
     AlignLeft: "Align left",
     AlignCenter: "Center",
     AlignRight: "Align right",
@@ -359,6 +360,7 @@ define([], () => {
     CollectionDataItemMissingFields: "Fields collection is empty!",
     InvalidUrlError: "The provided URL is not valid",
     CollectionDataSearch: "Search",
+    CollectionDataMinimumUsersDefaultMessage: "Minimum number of users to be selected is {0}",
     MyTeamsLoadingMessage: "loading your teams",
     MyTeamsMessageError: "Something went wrong while loading your teams, please try later or refresh browser",
 
@@ -387,6 +389,9 @@ define([], () => {
     DynamicFormNumberValueMustBeGreaterThan: "Value must be greater than {0}",
     DynamicFormNumberValueMustBeBetween: "Value must be between {0} and {1}",
     DynamicFormNumberValueMustBeLowerThan: "Value must be lower than {0}",
+    DynamicFormChooseFileLabel: "File",
+    DynamicFormChooseFileButtonText: "Select file",
+    DynamicFormRequiredFileMessage: "File is required.",
     customDisplayName: "Use this location:",
     ListItemCommentDIalogDeleteSubText: "Are you sure that you want to delete this comment?",
     ListItemCommentsDialogDeleteTitle: "Confirm Delete Comment",
@@ -421,6 +426,8 @@ TermSetNavigationNoTerms: "No terms defined",
     UpLoadFilesDragDropLabel: "Drag and Drop files or select Add File button",
     UpLoadFilesSelectAllLabel: "Select all",
     UploadFilesUploadButtonLabel: "Upload",
+
+    HoverReactionBarSearchEmojiPlaceholder: "Search emoji",
 
 };
 });

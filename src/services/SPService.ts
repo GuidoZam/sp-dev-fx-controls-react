@@ -2,9 +2,10 @@ import { BaseComponentContext } from '@microsoft/sp-component-base';
 import { ISPHttpClientOptions, SPHttpClient } from "@microsoft/sp-http";
 import filter from 'lodash/filter';
 import find from 'lodash/find';
-import { ISPContentType, ISPField, ISPList, ISPLists, IUploadImageResult } from "../common/SPEntities";
+import { ISPContentType, ISPField, ISPList, ISPLists, IUploadImageResult, ISPViews } from "../common/SPEntities";
 import { SPHelper, urlCombine } from "../common/utilities";
-import { IContentTypesOptions, IFieldsOptions, ILibsOptions, ISPService, LibsOrderBy } from "./ISPService";
+import { IContentTypesOptions, IFieldsOptions, ILibsOptions, IRenderListDataAsStreamClientFormResult, ISPService, LibsOrderBy } from "./ISPService";
+import {orderBy } from '../controls/viewPicker/IViewPicker';
 
 interface ICachedListItems {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -726,6 +727,55 @@ export default class SPService implements ISPService {
     return result;
   }
 
+  /** 
+   * Get form rendering information for a SharePoint list. 
+   */
+  async getListFormRenderInfo(listId: string, webUrl?: string): Promise<IRenderListDataAsStreamClientFormResult> {
+    try {
+      const webAbsoluteUrl = !webUrl ? this._context.pageContext.web.absoluteUrl : webUrl;
+      const apiRequestPath = `/_api/web/lists(guid'${listId}')/RenderListDataAsStream`;
+
+      const apiUrl = urlCombine(webAbsoluteUrl, apiRequestPath, false);
+      const response = await this._context.spHttpClient.post(apiUrl, SPHttpClient.configurations.v1, {
+        body: JSON.stringify({
+          "parameters": {
+            "RenderOptions": 64,
+            "ViewXml":"<View><ViewFields><FieldRef Name=\"ID\"/></ViewFields></View>",
+            "AddRequiredFields":true
+          }
+        })
+      });
+
+      if (response.ok) {
+        const result = await response.json() as IRenderListDataAsStreamClientFormResult;
+        return result;
+      }
+      return null;
+    } catch (error) {
+      console.dir(error);
+      return Promise.reject(error);
+    }
+  }
+
+  /**
+   * Get additional form rendering and validation information for a SharePoint list.
+   * Captures information not returned by RenderListDataAsStream with RenderOptions = 64
+   */
+  async getAdditionalListFormFieldInfo(listId: string, webUrl?: string): Promise<ISPField[]> {
+    try {
+      const webAbsoluteUrl = !webUrl ? this._context.pageContext.web.absoluteUrl : webUrl;
+      const apiRequestPath = `/_api/web/lists(guid'${listId}')/Fields?$filter=TypeAsString eq 'Number' or TypeAsString eq 'Currency' or ValidationFormula ne null`;
+
+      const apiUrl = urlCombine(webAbsoluteUrl, apiRequestPath, false);
+      const response = await this._context.spHttpClient.get(apiUrl, SPHttpClient.configurations.v1);
+      const result = await response.json();
+      return result.value;
+    } catch (error) {
+      console.dir(error);
+      return Promise.reject(error);
+    }
+  }
+
   private _filterListItemsFieldValuesAsText(items: any[], internalColumnName: string, filterText: string | undefined, substringSearch: boolean): any[] { // eslint-disable-line @typescript-eslint/no-explicit-any
     const lowercasedFilterText = filterText.toLowerCase();
 
@@ -741,6 +791,55 @@ export default class SPService implements ISPService {
       }
 
       return substringSearch ? fieldValue.indexOf(lowercasedFilterText) > -1 : fieldValue.startsWith(lowercasedFilterText);
+    });
+  }
+
+  /**
+   * Gets the collection of view for a selected list
+   */
+  public async getViews(listId?: string, orderby?: orderBy, filter?: string): Promise<ISPViews> {
+    if (listId === undefined || listId === "") {
+      return this.getEmptyViews();
+    }
+
+    // If the running environment is SharePoint, request the lists REST service
+    let queryUrl: string = `${this._webAbsoluteUrl}/_api/lists(guid'${listId}')/Views?$select=Title,Id`;
+
+    // Check if the orderBy property is provided
+    if (orderby !== null) {
+      queryUrl += '&$orderby=';
+      switch (orderby) {
+        case orderBy.Id:
+          queryUrl += 'Id';
+          break;
+        case orderBy.Title:
+          queryUrl += 'Title';
+          break;
+      }
+
+      // Adds an OData Filter to the list
+      if (filter) {
+        queryUrl += `&$filter=${encodeURIComponent(filter)}`;
+      }
+
+      const response = await this._context.spHttpClient.get(queryUrl, SPHttpClient.configurations.v1);
+      const views = (await response.json()) as ISPViews;
+
+      return views;
+    }
+  }
+
+  /**
+   * Returns an empty view for when a list isn't selected
+   */
+  private getEmptyViews(): Promise<ISPViews> {
+    return new Promise<ISPViews>((resolve) => {
+      const listData: ISPViews = {
+        value: [
+        ]
+      };
+
+      resolve(listData);
     });
   }
 }

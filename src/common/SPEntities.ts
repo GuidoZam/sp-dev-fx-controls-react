@@ -56,6 +56,11 @@ export interface ISPField {
     LookupDisplayUrl?: string;
     TypeAsString?: string;
     ResultType?: string;
+    ValidationFormula?: string;
+    ValidationMessage?: string;
+    MinimumValue?: number;
+    MaximumValue?: number;
+    CurrencyLocaleId?: number;
 }
 
 /**
@@ -205,4 +210,16 @@ export interface IUploadImageResult {
   Name: string;
   ServerRelativeUrl: string;
   UniqueId: string;
+}
+
+export interface ISPView {
+    Id: string;
+    Title: string;
+}
+
+  /**
+ * Defines a collection of SharePoint list views
+ */
+export interface ISPViews {
+    value: ISPView[];
 }
