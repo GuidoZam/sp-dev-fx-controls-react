@@ -1064,6 +1064,7 @@ export class DynamicForm extends React.Component<
         if (item !== null && item[field.InternalName]) {
           value = item[field.InternalName];
           stringValue = value.toString();
+          defaultValue = stringValue;
         } else {
           defaultValue = field.DefaultValue;
         }
