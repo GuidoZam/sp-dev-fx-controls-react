@@ -37,7 +37,8 @@ export class DynamicField extends React.Component<IDynamicFieldProps, IDynamicFi
   }
 
   public componentDidUpdate(): void {
-    if ((this.props.defaultValue === "" || this.props.defaultValue === null) && this.state.changedValue === null) {
+    const { defaultValue } = this.props;
+    if ((defaultValue === "" || defaultValue === null || defaultValue === undefined || this.isEmptyArray(defaultValue)) && this.state.changedValue === null) {
       this.setState({ changedValue: "" });
     }
   }

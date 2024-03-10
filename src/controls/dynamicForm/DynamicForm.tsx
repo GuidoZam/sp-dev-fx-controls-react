@@ -1110,6 +1110,7 @@ export class DynamicForm extends React.Component<
               this.webURL
             );
             stringValue = value?.map(dv => dv.key + ';#' + dv.name).join(';#');
+            defaultValue = stringValue;
             if (item[field.InternalName + "Id"]) {
               subPropertyValues.id = item[field.InternalName + "Id"];
               subPropertyValues.lookupId = subPropertyValues.id;
@@ -1134,6 +1135,7 @@ export class DynamicForm extends React.Component<
             );
             value = userEmails;
             stringValue = userEmails?.map(dv => dv.split('/').shift()).join(';');
+            defaultValue = stringValue;
             if (item[field.InternalName + "Id"]) {
               subPropertyValues.id = item[field.InternalName + "Id"];
             }
@@ -1153,6 +1155,7 @@ export class DynamicForm extends React.Component<
               this.webURL
             );
             stringValue = value?.map(dv => dv.split('/').pop()).join(';');
+            defaultValue = stringValue;
           } else {
             value = [];
           }
@@ -1176,6 +1179,7 @@ export class DynamicForm extends React.Component<
               });
               value = selectedTags;
               stringValue = selectedTags?.map(dv => dv.key + ';#' + dv.name).join(';#');
+              defaultValue = stringValue;
             }
           } else {
             if (defaultValue !== "") {
