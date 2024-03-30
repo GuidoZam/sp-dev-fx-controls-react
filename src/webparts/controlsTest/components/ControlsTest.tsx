@@ -1500,11 +1500,11 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
               }]
             }}
             options={{
-              scales: {
-                y: {
-                  beginAtZero: true
-                }
-              }
+              // scales: {
+              //   y: {
+              //     beginAtZero: true
+              //   }
+              // }
             }} />
         </div>
         <div id="MapDiv" className={styles.container} hidden={!controlVisibility.Map}>

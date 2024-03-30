@@ -2,7 +2,8 @@ import * as React from 'react';
 import { IChartControlState, IChartControlProps } from './ChartControl.types';
 import styles from './ChartControl.module.scss';
 import { css } from '@fluentui/react/lib/Utilities';
-import { ActiveElement, BubbleDataPoint, Chart, ChartData, ChartDataset, ChartEvent, ChartType, ChartTypeRegistry, DefaultDataPoint, Point } from 'chart.js';
+//import { BarController, ActiveElement, BubbleDataPoint, Chart, ChartData, ChartDataset, ChartEvent, ChartType, ChartTypeRegistry, DefaultDataPoint, Point } from 'chart.js';
+import Chart, { ActiveElement, BubbleDataPoint, ChartData, ChartDataset, ChartEvent, ChartType, ChartTypeRegistry, DefaultDataPoint, Point } from 'chart.js/auto';
 import { PaletteGenerator } from './PaletteGenerator';
 import { AccessibleChartTable } from './AccessibleChartTable';
 import * as telemetry from '../../common/telemetry';
@@ -204,17 +205,17 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
   }
 
   /**
-   Will clear the chart canvas.
-   Used extensively internally between animation frames, but you might find it useful.
-   */
+  Will clear the chart canvas.
+  Used extensively internally between animation frames, but you might find it useful.
+  */
   public clear(): void {
     this._chart.clear();
   }
 
   /**
- Returns a base 64 encoded string of the chart in it's current state.
- @returns {string} A base-64 encoded PNG data URL containing image of the chart in its current state
- */
+  Returns a base 64 encoded string of the chart in it's current state.
+  @returns {string} A base-64 encoded PNG data URL containing image of the chart in its current state
+  */
   public toBase64Image(): string {
     return this._chart.toBase64Image();
   }
