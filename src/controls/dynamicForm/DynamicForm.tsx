@@ -335,7 +335,7 @@ export class DynamicForm extends React.Component<
 
         // When a field is required and has no value
         if (field.required) {
-          if (field.newValue === null) {
+          if (field.newValue === undefined && field.value === undefined) {
             if (
               field.defaultValue === null ||
               field.defaultValue === "" ||
@@ -367,12 +367,15 @@ export class DynamicForm extends React.Component<
       // Perform validation
       const validationDisabled = this.props.useFieldValidation === false;
       let validationErrors: Record<string, string> = {};
+      console.log("validationDisabled", validationDisabled);
+      console.log("validationFormulas", this.state.validationFormulas);
       if (!validationDisabled) {
         validationErrors = await this.evaluateFormulas(this.state.validationFormulas, true, true, this.state.hiddenByFormula) as Record<string, string>;
         if (Object.keys(validationErrors).length > 0) {
           shouldBeReturnBack = true;
         }
       }
+      console.log(validationErrors);
 
       // If validation failed, return without saving
       if (shouldBeReturnBack) {
