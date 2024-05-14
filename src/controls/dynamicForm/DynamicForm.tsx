@@ -330,78 +330,8 @@ export class DynamicForm extends React.Component<
       /** Set to true to cancel form submission */
       let shouldBeReturnBack = false;
 
+      console.log("onSubmitClick");
       const fields = (this.state.fieldCollection || []).slice();
-      fields.forEach((field) => {
-
-        // When a field is required and has no value
-        if (field.required) {
-          if (field.newValue === undefined && field.value === undefined) {
-            if (
-              field.defaultValue === null ||
-              field.defaultValue === "" ||
-              field.defaultValue.length === 0 ||
-              field.defaultValue === undefined
-            ) {
-              if (field.fieldType === "DateTime") field.defaultValue = null;
-              else field.defaultValue = "";
-              shouldBeReturnBack = true;
-            }
-          } else if (field.newValue === "") {
-            field.defaultValue = "";
-            shouldBeReturnBack = true;
-          } else if (Array.isArray(field.newValue) && field.newValue.length === 0) {
-            field.defaultValue = null;
-            shouldBeReturnBack = true;
-          }
-        }
-
-        // Check min and max values for number fields
-        if (field.fieldType === "Number" && field.newValue !== undefined && field.newValue.trim() !== "") {
-          if ((field.newValue < field.minimumValue) || (field.newValue > field.maximumValue)) {
-            shouldBeReturnBack = true;
-          }
-        }
-
-      });
-
-      // Perform validation
-      const validationDisabled = this.props.useFieldValidation === false;
-      let validationErrors: Record<string, string> = {};
-      console.log("validationDisabled", validationDisabled);
-      console.log("validationFormulas", this.state.validationFormulas);
-      if (!validationDisabled) {
-        validationErrors = await this.evaluateFormulas(this.state.validationFormulas, true, true, this.state.hiddenByFormula) as Record<string, string>;
-        if (Object.keys(validationErrors).length > 0) {
-          shouldBeReturnBack = true;
-        }
-      }
-      console.log(validationErrors);
-
-      // If validation failed, return without saving
-      if (shouldBeReturnBack) {
-        this.setState({
-          fieldCollection: fields,
-          isValidationErrorDialogOpen:
-            validationErrorDialogProps
-              ?.showDialogOnValidationError === true,
-        });
-        return;
-      }
-
-      if (fileSelectRendered === true && this.state.selectedFile === undefined && this.props.listItemId === undefined) {
-        this.setState({
-          missingSelectedFile: true,
-          isValidationErrorDialogOpen:
-            validationErrorDialogProps
-              ?.showDialogOnValidationError === true,
-          validationErrors
-        });
-        return;
-      }
-
-      this.setState({
-        isSaving: true,
-      });
 
       /** Item values for save / update */
       const objects = {};
@@ -507,6 +437,81 @@ export class DynamicForm extends React.Component<
           return;
         }
       }
+
+      fields.forEach((field) => {
+        if (field.columnInternalName === "FileLeafRef")
+          return;
+
+        // When a field is required and has no value
+        if (field.required) {
+          console.log(field.columnInternalName);
+          console.log(field.newValue);
+          console.log(field.value);
+          console.log(field.defaultValue);
+          if (field.newValue === undefined && field.value === undefined) {
+            if (
+              field.defaultValue === null ||
+              field.defaultValue === "" ||
+              field.defaultValue.length === 0 ||
+              field.defaultValue === undefined
+            ) {
+              if (field.fieldType === "DateTime") field.defaultValue = null;
+              else field.defaultValue = "";
+              shouldBeReturnBack = true;
+            }
+          } else if (field.newValue === "") {
+            field.defaultValue = "";
+            shouldBeReturnBack = true;
+          } else if (Array.isArray(field.newValue) && field.newValue.length === 0) {
+            field.defaultValue = null;
+            shouldBeReturnBack = true;
+          }
+        }
+
+        // Check min and max values for number fields
+        if (field.fieldType === "Number" && field.newValue !== undefined && field.newValue.trim() !== "") {
+          if ((field.newValue < field.minimumValue) || (field.newValue > field.maximumValue)) {
+            shouldBeReturnBack = true;
+          }
+        }
+      });
+
+      // Perform validation
+      const validationDisabled = this.props.useFieldValidation === false;
+      let validationErrors: Record<string, string> = {};
+
+      if (!validationDisabled) {
+        validationErrors = await this.evaluateFormulas(this.state.validationFormulas, true, true, this.state.hiddenByFormula) as Record<string, string>;
+        if (Object.keys(validationErrors).length > 0) {
+          shouldBeReturnBack = true;
+        }
+      }
+
+      // If validation failed, return without saving
+      if (shouldBeReturnBack) {
+        this.setState({
+          fieldCollection: fields,
+          isValidationErrorDialogOpen:
+            validationErrorDialogProps
+              ?.showDialogOnValidationError === true,
+        });
+        return;
+      }
+
+      if (fileSelectRendered === true && this.state.selectedFile === undefined && this.props.listItemId === undefined) {
+        this.setState({
+          missingSelectedFile: true,
+          isValidationErrorDialogOpen:
+            validationErrorDialogProps
+              ?.showDialogOnValidationError === true,
+          validationErrors
+        });
+        return;
+      }
+
+      this.setState({
+        isSaving: true,
+      });
 
       let apiError: string;
 

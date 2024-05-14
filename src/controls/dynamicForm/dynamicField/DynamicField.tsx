@@ -616,6 +616,7 @@ export class DynamicField extends React.Component<IDynamicFieldProps, IDynamicFi
     const {
       changedValue
     } = this.state;
+
     const { value, newValue, required } = this.props;
     if (newValue === undefined) {
       return required && (changedValue === undefined || changedValue === '' || changedValue === null || this.isEmptyArray(changedValue))
@@ -640,6 +641,10 @@ export class DynamicField extends React.Component<IDynamicFieldProps, IDynamicFi
       newValue,
       required
     } = this.props;
+
+    if (required && newValue !== undefined && (changedValue === undefined || changedValue === '' || changedValue === null || this.isEmptyArray(changedValue))) {
+      return strings.DynamicFormRequiredErrorMessage;
+    }
 
     if (required && newValue === undefined && (value === undefined || value === '' || value === null || this.isEmptyArray(value)) && (changedValue === undefined || changedValue === '' || changedValue === null || this.isEmptyArray(changedValue))) {
       return strings.DynamicFormRequiredErrorMessage;
