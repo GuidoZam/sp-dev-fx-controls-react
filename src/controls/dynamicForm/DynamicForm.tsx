@@ -330,148 +330,36 @@ export class DynamicForm extends React.Component<
       /** Set to true to cancel form submission */
       let shouldBeReturnBack = false;
 
-      console.log("onSubmitClick");
       const fields = (this.state.fieldCollection || []).slice();
-
-      /** Item values for save / update */
-      const objects = {};
-
-      for (let i = 0, len = fields.length; i < len; i++) {
-        const field = fields[i];
-        const {
-          fieldType,
-          additionalData,
-          columnInternalName,
-          hiddenFieldName,
-        } = field;
-        if (field.newValue !== null && field.newValue !== undefined) {
-
-          let value = field.newValue;
-          if (["Lookup", "LookupMulti", "User", "UserMulti", "TaxonomyFieldTypeMulti"].indexOf(fieldType) < 0) {
-            objects[columnInternalName] = value;
-          }
-
-          // Choice fields
-
-          if (fieldType === "Choice") {
-            objects[columnInternalName] = field.newValue.key;
-          }
-          if (fieldType === "MultiChoice") {
-            objects[columnInternalName] = { results: field.newValue };
-          }
-
-          // Lookup fields
-
-          if (fieldType === "Lookup") {
-            if (value && value.length > 0) {
-              objects[`${columnInternalName}Id`] = value[0].key;
-            } else {
-              objects[`${columnInternalName}Id`] = null;
-            }
-          }
-          if (fieldType === "LookupMulti") {
-            value = [];
-            field.newValue.forEach((element) => {
-              value.push(element.key);
-            });
-            objects[`${columnInternalName}Id`] = {
-              results: value.length === 0 ? null : value,
-            };
-          }
-
-          // User fields
-
-          if (fieldType === "User") {
-            objects[`${columnInternalName}Id`] = field.newValue.length === 0 ? null : field.newValue;
-          }
-          if (fieldType === "UserMulti") {
-            objects[`${columnInternalName}Id`] = {
-              results: field.newValue.length === 0 ? null : field.newValue,
-            };
-          }
-
-          // Taxonomy / Managed Metadata fields
-
-          if (fieldType === "TaxonomyFieldType") {
-            objects[columnInternalName] = {
-              __metadata: { type: "SP.Taxonomy.TaxonomyFieldValue" },
-              Label: value[0]?.name ?? "",
-              TermGuid: value[0]?.key ?? "11111111-1111-1111-1111-111111111111",
-              WssId: "-1",
-            };
-          }
-          if (fieldType === "TaxonomyFieldTypeMulti") {
-            objects[hiddenFieldName] = field.newValue
-              .map((term) => `-1#;${term.name}|${term.key};`)
-              .join("#");
-          }
-
-          // Other fields
-
-          if (fieldType === "Location") {
-            objects[columnInternalName] = JSON.stringify(field.newValue);
-          }
-          if (fieldType === "Thumbnail") {
-            if (additionalData) {
-              const uploadedImage = await this.uploadImage(additionalData);
-              objects[columnInternalName] = JSON.stringify({
-                type: "thumbnail",
-                fileName: uploadedImage.Name,
-                serverRelativeUrl: uploadedImage.ServerRelativeUrl,
-                id: uploadedImage.UniqueId,
-              });
-            } else {
-              objects[columnInternalName] = null;
-            }
-          }
-        }
-      }
-
-      if (onBeforeSubmit) {
-        const isCancelled = await onBeforeSubmit(objects);
-
-        if (isCancelled) {
-          this.setState({
-            isSaving: false,
-          });
-          return;
-        }
-      }
-
       fields.forEach((field) => {
-        if (field.columnInternalName === "FileLeafRef")
-          return;
-
-        // When a field is required and has no value
-        if (field.required) {
-          console.log(field.columnInternalName);
-          console.log(field.newValue);
-          console.log(field.value);
-          console.log(field.defaultValue);
-          if (field.newValue === undefined && field.value === undefined) {
-            if (
-              field.defaultValue === null ||
-              field.defaultValue === "" ||
-              field.defaultValue.length === 0 ||
-              field.defaultValue === undefined
-            ) {
-              if (field.fieldType === "DateTime") field.defaultValue = null;
-              else field.defaultValue = "";
+        if (field.columnInternalName !== "FileLeafRef") {
+          // When a field is required and has no value
+          if (field.required) {
+            if (field.newValue === undefined && field.value === undefined) {
+              if (
+                field.defaultValue === null ||
+                field.defaultValue === "" ||
+                field.defaultValue.length === 0 ||
+                field.defaultValue === undefined
+              ) {
+                if (field.fieldType === "DateTime") field.defaultValue = null;
+                else field.defaultValue = "";
+                shouldBeReturnBack = true;
+              }
+            } else if (field.newValue === "") {
+              field.defaultValue = "";
+              shouldBeReturnBack = true;
+            } else if (Array.isArray(field.newValue) && field.newValue.length === 0) {
+              field.defaultValue = null;
               shouldBeReturnBack = true;
             }
-          } else if (field.newValue === "") {
-            field.defaultValue = "";
-            shouldBeReturnBack = true;
-          } else if (Array.isArray(field.newValue) && field.newValue.length === 0) {
-            field.defaultValue = null;
-            shouldBeReturnBack = true;
           }
-        }
 
-        // Check min and max values for number fields
-        if (field.fieldType === "Number" && field.newValue !== undefined && field.newValue.trim() !== "") {
-          if ((field.newValue < field.minimumValue) || (field.newValue > field.maximumValue)) {
-            shouldBeReturnBack = true;
+          // Check min and max values for number fields
+          if (field.fieldType === "Number" && field.newValue !== undefined && field.newValue.trim() !== "") {
+            if ((field.newValue < field.minimumValue) || (field.newValue > field.maximumValue)) {
+              shouldBeReturnBack = true;
+            }
           }
         }
       });
@@ -479,7 +367,6 @@ export class DynamicForm extends React.Component<
       // Perform validation
       const validationDisabled = this.props.useFieldValidation === false;
       let validationErrors: Record<string, string> = {};
-
       if (!validationDisabled) {
         validationErrors = await this.evaluateFormulas(this.state.validationFormulas, true, true, this.state.hiddenByFormula) as Record<string, string>;
         if (Object.keys(validationErrors).length > 0) {
@@ -512,6 +399,116 @@ export class DynamicForm extends React.Component<
       this.setState({
         isSaving: true,
       });
+
+      /** Item values for save / update */
+      const objects = {};
+
+      for (let i = 0, len = fields.length; i < len; i++) {
+        const field = fields[i];
+        const {
+          fieldType,
+          additionalData,
+          columnInternalName,
+          hiddenFieldName,
+        } = field;
+        let fieldcolumnInternalName = columnInternalName;
+        if (fieldcolumnInternalName.startsWith('_x') || fieldcolumnInternalName.startsWith('_')) {
+          fieldcolumnInternalName = `OData_${fieldcolumnInternalName}`;
+        }
+        if (field.newValue !== null && field.newValue !== undefined) {
+
+          let value = field.newValue;
+
+          if (["Lookup", "LookupMulti", "User", "UserMulti", "TaxonomyFieldTypeMulti"].indexOf(fieldType) < 0) {
+            objects[columnInternalName] = value;
+          }
+
+          // Choice fields
+
+          if (fieldType === "Choice") {
+            objects[fieldcolumnInternalName] = field.newValue.key;
+          }
+          if (fieldType === "MultiChoice") {
+            objects[fieldcolumnInternalName] = { results: field.newValue };
+          }
+
+          // Lookup fields
+
+          if (fieldType === "Lookup") {
+            if (value && value.length > 0) {
+              objects[`${fieldcolumnInternalName}Id`] = value[0].key;
+            } else {
+              objects[`${fieldcolumnInternalName}Id`] = null;
+            }
+          }
+          if (fieldType === "LookupMulti") {
+            value = [];
+            field.newValue.forEach((element) => {
+              value.push(element.key);
+            });
+            objects[`${fieldcolumnInternalName}Id`] = {
+              results: value.length === 0 ? null : value,
+            };
+          }
+
+          // User fields
+
+          if (fieldType === "User") {
+            objects[`${fieldcolumnInternalName}Id`] = field.newValue.length === 0 ? null : field.newValue;
+          }
+          if (fieldType === "UserMulti") {
+            objects[`${fieldcolumnInternalName}Id`] = {
+              results: field.newValue.length === 0 ? null : field.newValue,
+            };
+          }
+
+          // Taxonomy / Managed Metadata fields
+
+          if (fieldType === "TaxonomyFieldType") {
+            objects[fieldcolumnInternalName] = {
+              __metadata: { type: "SP.Taxonomy.TaxonomyFieldValue" },
+              Label: value[0]?.name ?? "",
+              TermGuid: value[0]?.key ?? "11111111-1111-1111-1111-111111111111",
+              WssId: "-1",
+            };
+          }
+          if (fieldType === "TaxonomyFieldTypeMulti") {
+            objects[hiddenFieldName] = field.newValue
+              .map((term) => `-1#;${term.name}|${term.key};`)
+              .join("#");
+          }
+
+          // Other fields
+
+          if (fieldType === "Location") {
+            objects[fieldcolumnInternalName] = JSON.stringify(field.newValue);
+          }
+          if (fieldType === "Thumbnail") {
+            if (additionalData) {
+              const uploadedImage = await this.uploadImage(additionalData);
+              objects[fieldcolumnInternalName] = JSON.stringify({
+                type: "thumbnail",
+                fileName: uploadedImage.Name,
+                serverRelativeUrl: uploadedImage.ServerRelativeUrl,
+                id: uploadedImage.UniqueId,
+              });
+            } else {
+              objects[fieldcolumnInternalName] = null;
+            }
+          }
+        }
+      }
+
+      if (onBeforeSubmit) {
+        const isCancelled = await onBeforeSubmit(objects);
+
+        if (isCancelled) {
+          this.setState({
+            isSaving: false,
+          });
+          return;
+        }
+      }
 
       let apiError: string;
 
@@ -546,7 +543,7 @@ export class DynamicForm extends React.Component<
         contentTypeId === undefined ||
         contentTypeId === "" ||
         (!contentTypeId.startsWith("0x0120") &&
-        contentTypeId.startsWith("0x01"))
+          contentTypeId.startsWith("0x01"))
       ) {
         if (fileSelectRendered === true) {
           await this.addFileToLibrary(objects);
