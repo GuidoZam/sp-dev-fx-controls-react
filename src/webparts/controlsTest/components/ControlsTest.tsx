@@ -60,12 +60,12 @@ import { SPPermission } from "@microsoft/sp-page-context";
 
 import { Accordion } from "../../../controls/accordion";
 import {
-  ChartControl as ChartControlOld,
+  ChartControl,
   ChartType
 } from "../../../ChartControl";
 import {
-  ChartControl,
-  ChartTypes
+  ChartControl as ChartControlV2,
+  ChartTypeV2
 } from "../../../ChartControlV2";
 import {
   Accordion as AccessibleAccordion,
@@ -202,6 +202,7 @@ import { FieldPicker } from "../../../FieldPicker";
 import { Toggle } from "@fluentui/react";
 import { ListItemComments } from "../../../ListItemComments";
 import { ViewPicker } from "../../../controls/viewPicker";
+import { ChartOptions } from "chart.js-old";
 
 
 
@@ -485,6 +486,44 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
       ]
     }
   ];
+
+  private chartData = {
+    labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+    datasets: [{
+      label: '# of Votes',
+      data: [12, 19, 3, 5, 2, 3],
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(255, 159, 64, 0.2)'
+      ],
+      borderColor: [
+        'rgba(255,99,132,1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)'
+      ],
+      borderWidth: 1
+    }]
+  };
+
+  private chartOptions: ChartOptions = {
+    scales: {
+      yAxes: [{
+        ticks: {
+          beginAtZero: true
+        }
+      }]
+    }
+  };
+
+  private chartOptionsV2 = {
+  };
 
   constructor(props: IControlsTestProps) {
     super(props);
@@ -1437,75 +1476,66 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
           // defaultFilter="Team"
           />
         </div>
-        <div id="ChartControlOldDiv" className={styles.container} hidden={!controlVisibility.ChartControlOld}>
-          <ChartControlOld type={ChartType.Bar}
-            data={{
-              labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-              datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
-                backgroundColor: [
-                  'rgba(255, 99, 132, 0.2)',
-                  'rgba(54, 162, 235, 0.2)',
-                  'rgba(255, 206, 86, 0.2)',
-                  'rgba(75, 192, 192, 0.2)',
-                  'rgba(153, 102, 255, 0.2)',
-                  'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                  'rgba(255,99,132,1)',
-                  'rgba(54, 162, 235, 1)',
-                  'rgba(255, 206, 86, 1)',
-                  'rgba(75, 192, 192, 1)',
-                  'rgba(153, 102, 255, 1)',
-                  'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
-              }]
-            }}
-            options={{
-              scales: {
-                yAxes: [{
-                  ticks: {
-                    beginAtZero: true
-                  }
-                }]
-              }
-            }} />
-        </div>
         <div id="ChartControlDiv" className={styles.container} hidden={!controlVisibility.ChartControl}>
-          <ChartControl type={ChartTypes.Bar}
-            data={{
-              labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-              datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
-                backgroundColor: [
-                  'rgba(255, 99, 132, 0.2)',
-                  'rgba(54, 162, 235, 0.2)',
-                  'rgba(255, 206, 86, 0.2)',
-                  'rgba(75, 192, 192, 0.2)',
-                  'rgba(153, 102, 255, 0.2)',
-                  'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                  'rgba(255,99,132,1)',
-                  'rgba(54, 162, 235, 1)',
-                  'rgba(255, 206, 86, 1)',
-                  'rgba(75, 192, 192, 1)',
-                  'rgba(153, 102, 255, 1)',
-                  'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
-              }]
-            }}
-            options={{
-              // scales: {
-              //   y: {
-              //     beginAtZero: true
-              //   }
-              // }
-            }} />
+          <ChartControl type={ChartType.Bar}
+            data={this.chartData}
+            options={this.chartOptions} />
+          <ChartControl type={ChartType.Bubble}
+            data={this.chartData}
+            options={this.chartOptions} />
+          <ChartControl type={ChartType.Doughnut}
+            data={this.chartData}
+            options={this.chartOptions} />
+          <ChartControl type={ChartType.Line}
+            data={this.chartData}
+            options={this.chartOptions} />
+          <ChartControl type={ChartType.Pie}
+            data={this.chartData}
+            options={this.chartOptions} />
+          <ChartControl type={ChartType.PolarArea}
+            data={this.chartData}
+            options={this.chartOptions} />
+          <ChartControl type={ChartType.Radar}
+            data={this.chartData}
+            options={this.chartOptions} />
+          <ChartControl type={ChartType.Scatter}
+            data={this.chartData}
+            options={this.chartOptions} />
+        </div>
+        <div id="ChartControlV2Div" className={styles.container} hidden={!controlVisibility.ChartControlV2}>
+          <ChartControlV2 type={ChartTypeV2.Bar}
+            key="ChartControlV2Test1"
+            data={this.chartData}
+            options={this.chartOptionsV2} />
+          <ChartControlV2 type={ChartTypeV2.Bubble}
+            key="ChartControlV2Test2"
+            data={this.chartData}
+            options={this.chartOptionsV2} />
+          <ChartControlV2 type={ChartTypeV2.Doughnut}
+            key="ChartControlV2Test3"
+            data={this.chartData}
+            options={this.chartOptionsV2} />
+          <ChartControlV2 type={ChartTypeV2.Line}
+            key="ChartControlV2Test4"
+            data={this.chartData}
+            options={this.chartOptionsV2} />
+          <ChartControlV2 type={ChartTypeV2.Pie}
+            key="ChartControlV2Test5"
+            data={this.chartData}
+            options={this.chartOptionsV2} />
+          {/* Adding polar area and radar causes problems with all the others charts */}
+          <ChartControlV2 type={ChartTypeV2.PolarArea}
+            key="ChartControlV2Test6"
+            data={this.chartData}
+            options={this.chartOptionsV2} />
+          <ChartControlV2 type={ChartTypeV2.Radar}
+            key="ChartControlV2Test7"
+            data={this.chartData}
+            options={this.chartOptionsV2} />
+          <ChartControlV2 type={ChartTypeV2.Scatter}
+            key="ChartControlV2Test8"
+            data={this.chartData}
+            options={this.chartOptionsV2} />
         </div>
         <div id="MapDiv" className={styles.container} hidden={!controlVisibility.Map}>
           <Map titleText="New map control"

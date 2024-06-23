@@ -1,6 +1,6 @@
 export type ValidControls = "all" |
   "accessibleAccordion" | "adaptiveCardDesignerHost" | "adaptiveCardHost" |
-  "animatedDialog" | "Carousel" | "ChartControl" | "ChartControlOld" |
+  "animatedDialog" | "Carousel" | "ChartControl" | "ChartControlV2" |
   "ComboBoxListItemPicker" | "Dashboard" | "DateTimePicker" |
   "DragDropFiles" | "DynamicForm" | "EnhancedThemeProvider" |
   "FieldCollectionData" | "FieldPicker" | "FilePicker" |

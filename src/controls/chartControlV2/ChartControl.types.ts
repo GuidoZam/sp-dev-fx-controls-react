@@ -338,7 +338,7 @@ export interface IChartPlugin {
  * The types of charts available
  */
 /* tslint:disable */
-export const ChartTypes = {
+export const ChartTypeV2 = {
   Line: "line" as keyof ChartTypeRegistry,
   Bar: "bar" as keyof ChartTypeRegistry,
   Radar: "radar" as keyof ChartTypeRegistry,
