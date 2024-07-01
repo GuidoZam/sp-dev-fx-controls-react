@@ -203,6 +203,7 @@ import { Toggle } from "@fluentui/react";
 import { ListItemComments } from "../../../ListItemComments";
 import { ViewPicker } from "../../../controls/viewPicker";
 import { ChartOptions } from "chart.js-old";
+import { ChartOptions as ChartOptionsV2 } from "chart.js";
 
 
 
@@ -522,7 +523,13 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
     }
   };
 
-  private chartOptionsV2 = {
+  private chartOptionsV2: ChartOptionsV2 = {
+    scales: {
+      y: {
+        suggestedMin: 0,
+        suggestedMax: 20
+      }
+    }
   };
 
   constructor(props: IControlsTestProps) {
@@ -1480,60 +1487,9 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
           <ChartControl type={ChartType.Bar}
             data={this.chartData}
             options={this.chartOptions} />
-          <ChartControl type={ChartType.Bubble}
-            data={this.chartData}
-            options={this.chartOptions} />
-          <ChartControl type={ChartType.Doughnut}
-            data={this.chartData}
-            options={this.chartOptions} />
-          <ChartControl type={ChartType.Line}
-            data={this.chartData}
-            options={this.chartOptions} />
-          <ChartControl type={ChartType.Pie}
-            data={this.chartData}
-            options={this.chartOptions} />
-          <ChartControl type={ChartType.PolarArea}
-            data={this.chartData}
-            options={this.chartOptions} />
-          <ChartControl type={ChartType.Radar}
-            data={this.chartData}
-            options={this.chartOptions} />
-          <ChartControl type={ChartType.Scatter}
-            data={this.chartData}
-            options={this.chartOptions} />
         </div>
         <div id="ChartControlV2Div" className={styles.container} hidden={!controlVisibility.ChartControlV2}>
           <ChartControlV2 type={ChartTypeV2.Bar}
-            key="ChartControlV2Test1"
-            data={this.chartData}
-            options={this.chartOptionsV2} />
-          <ChartControlV2 type={ChartTypeV2.Bubble}
-            key="ChartControlV2Test2"
-            data={this.chartData}
-            options={this.chartOptionsV2} />
-          <ChartControlV2 type={ChartTypeV2.Doughnut}
-            key="ChartControlV2Test3"
-            data={this.chartData}
-            options={this.chartOptionsV2} />
-          <ChartControlV2 type={ChartTypeV2.Line}
-            key="ChartControlV2Test4"
-            data={this.chartData}
-            options={this.chartOptionsV2} />
-          <ChartControlV2 type={ChartTypeV2.Pie}
-            key="ChartControlV2Test5"
-            data={this.chartData}
-            options={this.chartOptionsV2} />
-          {/* Adding polar area and radar causes problems with all the others charts */}
-          <ChartControlV2 type={ChartTypeV2.PolarArea}
-            key="ChartControlV2Test6"
-            data={this.chartData}
-            options={this.chartOptionsV2} />
-          <ChartControlV2 type={ChartTypeV2.Radar}
-            key="ChartControlV2Test7"
-            data={this.chartData}
-            options={this.chartOptionsV2} />
-          <ChartControlV2 type={ChartTypeV2.Scatter}
-            key="ChartControlV2Test8"
             data={this.chartData}
             options={this.chartOptionsV2} />
         </div>
