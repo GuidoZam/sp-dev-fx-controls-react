@@ -1,16 +1,23 @@
 import * as React from 'react';
 import { IAccessibleChartTableState, IAccessibleChartTableProps } from './AccessibleChartTable.types';
 import styles from './ChartControl.module.scss';
-import { ChartDataset } from 'chart.js';
+import { ChartDataset, Chart } from 'chart.js/auto';
 import { Guid } from '@microsoft/sp-core-library';
 import { css } from '@fluentui/react/lib/Utilities';
 import { escape } from '@microsoft/sp-lodash-subset';
 
 export class AccessibleChartTable extends React.Component<IAccessibleChartTableProps, IAccessibleChartTableState> {
+  constructor(props: IAccessibleChartTableProps) {
+    super(props);
+
+    //Chart.defaults.datasets.line.showLine = false;
+  }
   public render(): React.ReactElement<IAccessibleChartTableProps> {
     const {
       onRenderTable,
-      data
+      data,
+      key,
+      className
     } = this.props;
 
     if (data === undefined || data.datasets === undefined || data.datasets.length < 1) {
@@ -27,7 +34,7 @@ export class AccessibleChartTable extends React.Component<IAccessibleChartTableP
     const tableBody: JSX.Element[] = this._renderTableBody();
 
     return (
-      <div className={css(styles.accessibleTable, this.props.className)}>
+      <div key={key} className={css(styles.accessibleTable, className)}>
         {tableBody && tableBody.length > 0 ?
           <table >
             {this._renderCaption()}

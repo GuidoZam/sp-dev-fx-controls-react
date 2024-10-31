@@ -65,6 +65,7 @@ import {
 } from "../../../ChartControl";
 import {
   ChartControl as ChartControlV2,
+  ChartPalette,
   ChartTypeV2
 } from "../../../ChartControlV2";
 import {
@@ -1489,7 +1490,46 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
             options={this.chartOptions} />
         </div>
         <div id="ChartControlV2Div" className={styles.container} hidden={!controlVisibility.ChartControlV2}>
-          <ChartControlV2 type={ChartTypeV2.Bar}
+          <ChartControlV2
+            key="testChart-bar"
+            type={ChartTypeV2.Bar}
+            data={this.chartData}
+            options={this.chartOptionsV2} />
+          <ChartControlV2
+            key="testChart-bubble"
+            type={ChartTypeV2.Bubble}
+            data={this.chartData}
+            options={this.chartOptionsV2}
+            palette={ChartPalette.OfficeColorful3} />
+          <ChartControlV2
+            key="testChart-doughnut"
+            type={ChartTypeV2.Doughnut}
+            data={this.chartData}
+            options={this.chartOptionsV2}
+            className={styles.customChartV2Class}/>
+          <ChartControlV2
+            key="testChart-line"
+            type={ChartTypeV2.Line}
+            data={this.chartData}
+            options={this.chartOptionsV2} />
+          <ChartControlV2
+            key="testChart-pie"
+            type={ChartTypeV2.Pie}
+            data={this.chartData}
+            options={this.chartOptionsV2} />
+          {/* <ChartControlV2
+            key="testChart-polarArea"
+            type={ChartTypeV2.PolarArea}
+            data={this.chartData}
+            options={this.chartOptionsV2} /> */}
+          {/* <ChartControlV2
+            key="testChart-radar"
+            type={ChartTypeV2.Radar}
+            data={this.chartData}
+            options={this.chartOptionsV2} /> */}
+          <ChartControlV2
+            key="testChart-scatter"
+            type={ChartTypeV2.Scatter}
             data={this.chartData}
             options={this.chartOptionsV2} />
         </div>

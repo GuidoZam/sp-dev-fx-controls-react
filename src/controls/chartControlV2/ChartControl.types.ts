@@ -13,7 +13,7 @@ import {
   Point,
   Plugin,
   DefaultDataPoint
-} from "chart.js";
+} from "chart.js/auto";
 
 /**
  * The properties for the ChartComponent object
@@ -64,6 +64,21 @@ export interface IChartControlProps {
   @type {ChartType}
    */
   type: ChartType;
+
+  /**
+  The identifier of the chart container
+   */
+  key?: string;
+
+  /**
+  The width of the chart
+   */
+  width?: number;
+
+  /**
+  The height of the chart
+   */
+  height?: number;
 
   /**
   The custom CSS classname

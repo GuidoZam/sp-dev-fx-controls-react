@@ -17,6 +17,11 @@ export interface IAccessibleChartTableProps {
   className?: string;
 
   /**
+  The identifier of the chart container
+   */
+  key?: string;
+
+  /**
    * Provides a summary of the data
    */
   summary?: string;

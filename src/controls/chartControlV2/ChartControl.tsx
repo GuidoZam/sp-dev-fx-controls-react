@@ -2,7 +2,6 @@ import * as React from 'react';
 import { IChartControlState, IChartControlProps } from './ChartControl.types';
 import styles from './ChartControl.module.scss';
 import { css } from '@fluentui/react/lib/Utilities';
-//import { BarController, ActiveElement, BubbleDataPoint, Chart, ChartData, ChartDataset, ChartEvent, ChartType, ChartTypeRegistry, DefaultDataPoint, Point } from 'chart.js';
 import Chart, { ActiveElement, BubbleDataPoint, ChartData, ChartDataset, ChartEvent, ChartType, ChartTypeRegistry, DefaultDataPoint, Point } from 'chart.js/auto';
 import { PaletteGenerator } from './PaletteGenerator';
 import { AccessibleChartTable } from './AccessibleChartTable';
@@ -10,6 +9,7 @@ import * as telemetry from '../../common/telemetry';
 import { ChartPalette } from './ChartControl.types';
 import { ThemeColorHelper } from '../../common/utilities/ThemeColorHelper';
 import { element } from 'prop-types';
+import { Guid } from '@microsoft/sp-core-library';
 
 export class ChartControl extends React.Component<IChartControlProps, IChartControlState> {
 
@@ -45,7 +45,7 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
   constructor(props: IChartControlProps) {
     super(props);
 
-    telemetry.track('ReactChartComponent', {
+    telemetry.track('ReactChartComponentV2', {
       type: !!props.type,
       className: !!props.className,
       palette: !!props.palette,
@@ -127,7 +127,10 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
       accessibility,
       useTheme,
       options,
-      data
+      data,
+      key,
+      width,
+      height
     } = this.props;
 
     // If we're still loading, try to show the loading template
@@ -155,11 +158,18 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
     const alternateText: string = accessibility.alternateText;
 
     return (
-      <div className={css(styles.chartComponent, (useTheme ? styles.themed : null), this.props.className)} >
+      <div
+        className={css(styles.chartComponent, (useTheme ? styles.themed : null), this.props.className)}
+        style={{
+          width: width ? width : '100%',
+          height: height ? height : '100%'
+        }}
+      >
         <canvas ref={this._linkCanvas} role='img' aria-label={alternateText} />
         {
           accessibility.enable === undefined || accessibility.enable ? (
             <AccessibleChartTable
+              key={key ?? `chart-${Guid.newGuid().toString()}`}
               chartType={type}
               data={data || this.state.data}
               chartOptions={options}
@@ -279,24 +289,27 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
       options,
       type,
       plugins,
-      useTheme
+      useTheme,
+      onClick,
+      onHover,
+      onResize
     } = props;
 
     // add event handlers -- if they weren't already provided through options
-    if (this.props.onClick !== undefined) {
+    if (onClick !== undefined) {
       if (options.onClick === undefined) {
-        options.onClick = this.props.onClick;
+        options.onClick = onClick;
       }
     }
 
     // Add onhover
-    if (this.props.onHover !== undefined) {
+    if (onHover !== undefined) {
       if (options.onHover === undefined) {
         options.onHover = (event: ChartEvent,
           elements: ActiveElement[],
           chart: Chart<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint)[], unknown>)
           : void => {
-          this.props.onHover(event, elements, chart);
+          onHover(event, elements, chart);
         };
       }
     }
@@ -304,10 +317,10 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
     // Add onResize
     // Note that onResize won't work unless the chart is
     // position: relative and has a height and width defined
-    if (this.props.onResize !== undefined) {
+    if (onResize !== undefined) {
       if (options.onResize === undefined) {
         options.onResize = (chart: Chart, size: { width: number; height: number }) => {
-          this.props.onResize(this.getChart(), size);
+          onResize(this.getChart(), size);
         };
       }
     }
