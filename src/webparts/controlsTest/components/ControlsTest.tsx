@@ -533,6 +533,20 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
     }
   };
 
+  private chartOptionsV2WithoutGrids: ChartOptionsV2 = {
+    responsive: true,
+    scales: {
+      x: {
+        display: false
+      },
+      y: {
+        display: false,
+        suggestedMin: 0,
+        suggestedMax: 20
+      }
+    }
+  };
+
   constructor(props: IControlsTestProps) {
     super(props);
 
@@ -1505,7 +1519,7 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
             key="testChart-doughnut"
             type={ChartTypeV2.Doughnut}
             data={this.chartData}
-            options={this.chartOptionsV2}
+            options={this.chartOptionsV2WithoutGrids}
             className={styles.customChartV2Class}/>
           <ChartControlV2
             key="testChart-line"
@@ -1516,17 +1530,17 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
             key="testChart-pie"
             type={ChartTypeV2.Pie}
             data={this.chartData}
-            options={this.chartOptionsV2} />
-          {/* <ChartControlV2
+            options={this.chartOptionsV2WithoutGrids} />
+          <ChartControlV2
             key="testChart-polarArea"
             type={ChartTypeV2.PolarArea}
             data={this.chartData}
-            options={this.chartOptionsV2} /> */}
-          {/* <ChartControlV2
+            options={this.chartOptionsV2WithoutGrids} />
+          <ChartControlV2
             key="testChart-radar"
             type={ChartTypeV2.Radar}
             data={this.chartData}
-            options={this.chartOptionsV2} /> */}
+            options={this.chartOptionsV2WithoutGrids} />
           <ChartControlV2
             key="testChart-scatter"
             type={ChartTypeV2.Scatter}
