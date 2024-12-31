@@ -33,7 +33,6 @@ import {
   IDocumentCardPreviewProps
 } from "@fluentui/react/lib/DocumentCard";
 import { IIconProps } from "@fluentui/react/lib/Icon";
-import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import { ImageFit } from "@fluentui/react/lib/Image";
 import { PanelType } from "@fluentui/react/lib/Panel";
 import { mergeStyles } from "@fluentui/react/lib/Styling";
@@ -68,6 +67,7 @@ import {
   ChartPalette,
   ChartTypeV2
 } from "../../../ChartControlV2";
+import Chart from 'chart.js/auto';
 import {
   Accordion as AccessibleAccordion,
   AccordionItem,
@@ -204,7 +204,6 @@ import { Toggle } from "@fluentui/react";
 import { ListItemComments } from "../../../ListItemComments";
 import { ViewPicker } from "../../../controls/viewPicker";
 import { ChartOptions } from "chart.js-old";
-import { ChartOptions as ChartOptionsV2 } from "chart.js";
 
 
 
@@ -514,6 +513,116 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
     }]
   };
 
+  private chartDataV2 = {
+    labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+    datasets: [{
+      label: '# of Votes',
+      data: [12, 19, 3, 8, 11, 3],
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(255, 159, 64, 0.2)'
+      ],
+      borderColor: [
+        'rgba(255,99,132,1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)'
+      ],
+      borderWidth: 1
+    }]
+  };
+
+  private chartDataV2Bubbles = {
+    datasets: [{
+      label: '# of Votes',
+      data: [
+        { x: 5, y: 22, r: 8 },
+        { x: 23, y: 5, r: 16 },
+        { x: 11, y: 18, r: 10 },
+        { x: 17, y: 3, r: 11 },
+        { x: 26, y: 7, r: 2 },
+        { x: 30, y: 15, r: 5 },
+        { x: 27, y: 20, r: 13 }
+      ],
+      borderWidth: 1
+    }]
+  };
+
+  private chartDataV2MultipleDatasets = {
+    labels: ["This choice", "Other choice", "First choice on first level", "Second choice on first level", "First choice on second level", "Second choice on second level"],
+    datasets: [{
+      label: '# of Votes',
+      data: [69, 31],
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.2)'
+      ],
+      borderWidth: 1
+    }, {
+      label: '# of Votes',
+      data: [42, 58],
+      backgroundColor: [
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)'
+      ],
+      borderWidth: 1
+    }, {
+      label: '# of Votes',
+      data: [20, 80],
+      backgroundColor: [
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(255, 159, 64, 0.2)'
+      ],
+      borderWidth: 1
+    }]
+  };
+
+  private chartDataV2DatasetsDifferentTypes = {
+    labels: ["Yellow", "Green", "Purple", "Orange"],
+    datasets: [{
+      label: '# of Votes',
+      data: [25, 31, 14, 17],
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(255, 159, 64, 0.2)'
+      ],
+      borderColor: [
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)',
+        'rgba(255,99,132,1)',
+        'rgba(54, 162, 235, 1)'
+      ],
+      borderWidth: 1,
+      order: 1
+    }, {
+      label: '# of Votes',
+      data: [42, 20, 15, 30],
+      type: 'line',
+      backgroundColor: [
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        '#8B1A1A',
+        '#CC3700'
+      ],
+      borderColor: [
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        '#A52A2A',
+        '#FF4500'
+      ],
+      borderWidth: 1,
+      order: 0
+    }]
+  };
+
   private chartOptions: ChartOptions = {
     scales: {
       yAxes: [{
@@ -521,29 +630,6 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
           beginAtZero: true
         }
       }]
-    }
-  };
-
-  private chartOptionsV2: ChartOptionsV2 = {
-    scales: {
-      y: {
-        suggestedMin: 0,
-        suggestedMax: 20
-      }
-    }
-  };
-
-  private chartOptionsV2WithoutGrids: ChartOptionsV2 = {
-    responsive: true,
-    scales: {
-      x: {
-        display: false
-      },
-      y: {
-        display: false,
-        suggestedMin: 0,
-        suggestedMax: 20
-      }
     }
   };
 
@@ -577,7 +663,8 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
       selectedFilters: ["filter1"],
       termStoreInfo: null,
       termSetInfo: null,
-      testTerms: []
+      testTerms: [],
+      chartV2LegendPosition: 'top',
     };
 
     this._onIconSizeChange = this._onIconSizeChange.bind(this);
@@ -1504,48 +1591,231 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
             options={this.chartOptions} />
         </div>
         <div id="ChartControlV2Div" className={styles.container} hidden={!controlVisibility.ChartControlV2}>
+          <Dropdown label="Legend position" selectedKey={this.state.chartV2LegendPosition} options={[
+            { key: 'top', text: 'Top' },
+            { key: 'bottom', text: 'Bottom' },
+            { key: 'left', text: 'Left' },
+            { key: 'right', text: 'Right' }
+          ]} onChange={(ev, option) => this.setState({ chartV2LegendPosition: option.key as any })} />
           <ChartControlV2
             key="testChart-bar"
             type={ChartTypeV2.Bar}
-            data={this.chartData}
-            options={this.chartOptionsV2} />
+            data={this.chartDataV2}
+            options={{
+              plugins: {
+                title: {
+                  display: true,
+                  text: 'Bar chart'
+                },
+                legend: {
+                  position: this.state.chartV2LegendPosition
+                }
+              }
+            }} />
           <ChartControlV2
             key="testChart-bubble"
             type={ChartTypeV2.Bubble}
-            data={this.chartData}
-            options={this.chartOptionsV2}
+            data={this.chartDataV2Bubbles}
+            options={{
+              plugins: {
+                title: {
+                  display: true,
+                  text: 'Bubble chart'
+                },
+                legend: {
+                  position: this.state.chartV2LegendPosition
+                }
+              }
+            }}
             palette={ChartPalette.OfficeColorful3} />
           <ChartControlV2
             key="testChart-doughnut"
             type={ChartTypeV2.Doughnut}
-            data={this.chartData}
-            options={this.chartOptionsV2WithoutGrids}
+            data={this.chartDataV2}
+            options={{
+              plugins: {
+                title: {
+                  display: true,
+                  text: 'Doughnut chart'
+                },
+                legend: {
+                  position: this.state.chartV2LegendPosition
+                }
+              },
+              scales: {
+                x: {
+                  display: false
+                },
+                y: {
+                  display: false,
+                  suggestedMin: 0,
+                  suggestedMax: 20
+                }
+              }
+            }}
             className={styles.customChartV2Class}/>
           <ChartControlV2
             key="testChart-line"
             type={ChartTypeV2.Line}
-            data={this.chartData}
-            options={this.chartOptionsV2} />
+            data={this.chartDataV2}
+            options={{
+              plugins: {
+                title: {
+                  display: true,
+                  text: 'Line chart'
+                },
+                legend: {
+                  position: this.state.chartV2LegendPosition
+                }
+              },
+              scales: {
+                y: {
+                  suggestedMin: 0,
+                  suggestedMax: 20
+                }
+              }
+            }} />
           <ChartControlV2
             key="testChart-pie"
             type={ChartTypeV2.Pie}
-            data={this.chartData}
-            options={this.chartOptionsV2WithoutGrids} />
+            data={this.chartDataV2MultipleDatasets}
+            options={{
+              plugins: {
+                title: {
+                  display: true,
+                  text: 'Pie chart with multiple datasets'
+                },
+                legend: {
+                  position: this.state.chartV2LegendPosition,
+                  labels: {
+                    generateLabels: function (chart) {
+                      // Get the default label list
+                      const original = Chart.overrides.pie.plugins.legend.labels.generateLabels;
+                      const labelsOriginal = original.call(this, chart);
+
+                      // Build an array of colors used in the datasets of the chart
+                      let datasetColors = chart.data.datasets.map(function (e) {
+                        return e.backgroundColor as string;
+                      });
+
+                      datasetColors = datasetColors.reduce((acc, val) => acc.concat(val), []);
+
+                      // Modify the color and hide state of each label
+                      labelsOriginal.forEach(label => {
+                        // There are twice as many labels as there are datasets. This converts the label index into the corresponding dataset index
+                        label.datasetIndex = (label.index - label.index % 2) / 2;
+
+                        // The hidden state must match the dataset's hidden state
+                        label.hidden = !chart.isDatasetVisible(label.datasetIndex);
+
+                        // Change the color to match the dataset
+                        label.fillStyle = datasetColors[label.index];
+                      });
+
+                      return labelsOriginal;
+                    }
+                  }
+                },
+                tooltip: {
+                  callbacks: {
+                    title: function (context) {
+                      const labelIndex = (context[0].datasetIndex * 2) + context[0].dataIndex;
+                      return context[0].chart.data.labels[labelIndex] + ': ' + context[0].formattedValue;
+                    }
+                  }
+                }
+              },
+              scales: {
+                x: {
+                  display: false
+                },
+                y: {
+                  display: false,
+                  suggestedMin: 0,
+                  suggestedMax: 20
+                }
+              }
+            }} />
           <ChartControlV2
             key="testChart-polarArea"
             type={ChartTypeV2.PolarArea}
-            data={this.chartData}
-            options={this.chartOptionsV2WithoutGrids} />
+            data={this.chartDataV2}
+            options={{
+              plugins: {
+                title: {
+                  display: true,
+                  text: 'Polar Area chart'
+                },
+                legend: {
+                  position: this.state.chartV2LegendPosition
+                }
+              },
+              scales: {
+                x: {
+                  display: false
+                },
+                y: {
+                  display: false,
+                  suggestedMin: 0,
+                  suggestedMax: 20
+                }
+              }
+            }} />
           <ChartControlV2
             key="testChart-radar"
             type={ChartTypeV2.Radar}
-            data={this.chartData}
-            options={this.chartOptionsV2WithoutGrids} />
+            data={this.chartDataV2}
+            options={{
+              plugins: {
+                title: {
+                  display: true,
+                  text: 'Radar chart'
+                },
+                legend: {
+                  position: this.state.chartV2LegendPosition
+                }
+              },
+              scales: {
+                x: {
+                  display: false
+                },
+                y: {
+                  display: false,
+                  suggestedMin: 0,
+                  suggestedMax: 20
+                }
+              }
+            }} />
           <ChartControlV2
             key="testChart-scatter"
             type={ChartTypeV2.Scatter}
-            data={this.chartData}
-            options={this.chartOptionsV2} />
+            data={this.chartDataV2Bubbles}
+            options={{
+              plugins: {
+                title: {
+                  display: true,
+                  text: 'Scatter chart'
+                },
+                legend: {
+                  position: this.state.chartV2LegendPosition
+                }
+              },
+            }} />
+          {/* <ChartControlV2
+            key="testChart-multiple-charts"
+            type={ChartTypeV2.Bar}
+            data={this.chartDataV2DatasetsDifferentTypes}
+            options={{
+              plugins: {
+                title: {
+                  display: true,
+                  text: 'Scatter chart'
+                },
+                legend: {
+                  position: this.state.chartV2LegendPosition
+                }
+              },
+            }} /> */}
         </div>
         <div id="MapDiv" className={styles.container} hidden={!controlVisibility.Map}>
           <Map titleText="New map control"
