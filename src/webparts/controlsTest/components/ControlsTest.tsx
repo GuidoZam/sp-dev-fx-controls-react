@@ -585,7 +585,7 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
   private chartDataV2DatasetsDifferentTypes: ChartData<ChartJSType> = {
     labels: ['January', 'February', 'March', 'April'],
     datasets: [{
-      label: 'Dataset 1',
+      label: 'Dataset 2',
       data: [10, 20, 30, 40],
       backgroundColor: 'rgba(255, 159, 64, 1)',
       borderColor: 'rgba(255, 159, 64, 1)',
@@ -593,7 +593,7 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
       order: 1,
       type: 'bar' as ChartJSType
     }, {
-      label: 'Dataset 2',
+      label: 'Dataset 1',
       data: [42, 20, 15, 30],
       backgroundColor: 'rgba(54, 162, 235, 1)',
       borderColor: 'rgba(54, 162, 235, 1)',
@@ -1789,7 +1789,7 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
               plugins: {
                 title: {
                   display: true,
-                  text: 'Scatter chart'
+                  text: 'Multiple charts'
                 },
                 legend: {
                   position: this.state.chartV2LegendPosition
