@@ -67,7 +67,7 @@ import {
   ChartPalette,
   ChartTypeV2
 } from "../../../ChartControlV2";
-import Chart from 'chart.js/auto';
+import Chart, { ChartData, ChartDataset, ChartType as ChartJSType } from 'chart.js/auto';
 import {
   Accordion as AccessibleAccordion,
   AccordionItem,
@@ -204,7 +204,6 @@ import { Toggle } from "@fluentui/react";
 import { ListItemComments } from "../../../ListItemComments";
 import { ViewPicker } from "../../../controls/viewPicker";
 import { ChartOptions } from "chart.js-old";
-
 
 
 // Used to render document card
@@ -543,10 +542,10 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
       label: '# of Votes',
       data: [
         { x: 5, y: 22, r: 8 },
-        { x: 23, y: 5, r: 16 },
+        { x: 23, y: 5, r: 26 },
         { x: 11, y: 18, r: 10 },
-        { x: 17, y: 3, r: 11 },
-        { x: 26, y: 7, r: 2 },
+        { x: 17, y: 3, r: 17 },
+        { x: 26, y: 7, r: 6 },
         { x: 30, y: 15, r: 5 },
         { x: 27, y: 20, r: 13 }
       ],
@@ -583,43 +582,24 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
     }]
   };
 
-  private chartDataV2DatasetsDifferentTypes = {
-    labels: ["Yellow", "Green", "Purple", "Orange"],
+  private chartDataV2DatasetsDifferentTypes: ChartData<ChartJSType> = {
+    labels: ['January', 'February', 'March', 'April'],
     datasets: [{
-      label: '# of Votes',
-      data: [25, 31, 14, 17],
-      backgroundColor: [
-        'rgba(255, 99, 132, 0.2)',
-        'rgba(54, 162, 235, 0.2)',
-        'rgba(153, 102, 255, 0.2)',
-        'rgba(255, 159, 64, 0.2)'
-      ],
-      borderColor: [
-        'rgba(153, 102, 255, 1)',
-        'rgba(255, 159, 64, 1)',
-        'rgba(255,99,132,1)',
-        'rgba(54, 162, 235, 1)'
-      ],
+      label: 'Dataset 1',
+      data: [10, 20, 30, 40],
+      backgroundColor: 'rgba(255, 159, 64, 1)',
+      borderColor: 'rgba(255, 159, 64, 1)',
       borderWidth: 1,
-      order: 1
+      order: 1,
+      type: 'bar' as ChartJSType
     }, {
-      label: '# of Votes',
+      label: 'Dataset 2',
       data: [42, 20, 15, 30],
-      type: 'line',
-      backgroundColor: [
-        'rgba(255, 206, 86, 0.2)',
-        'rgba(75, 192, 192, 0.2)',
-        '#8B1A1A',
-        '#CC3700'
-      ],
-      borderColor: [
-        'rgba(255, 206, 86, 1)',
-        'rgba(75, 192, 192, 1)',
-        '#A52A2A',
-        '#FF4500'
-      ],
-      borderWidth: 1,
-      order: 0
+      backgroundColor: 'rgba(54, 162, 235, 1)',
+      borderColor: 'rgba(54, 162, 235, 1)',
+      borderWidth: 5,
+      order: 0,
+      type: 'line' as ChartJSType
     }]
   };
 
@@ -1801,7 +1781,7 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
                 }
               },
             }} />
-          {/* <ChartControlV2
+          <ChartControlV2
             key="testChart-multiple-charts"
             type={ChartTypeV2.Bar}
             data={this.chartDataV2DatasetsDifferentTypes}
@@ -1815,7 +1795,7 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
                   position: this.state.chartV2LegendPosition
                 }
               },
-            }} /> */}
+            }} />
         </div>
         <div id="MapDiv" className={styles.container} hidden={!controlVisibility.Map}>
           <Map titleText="New map control"
