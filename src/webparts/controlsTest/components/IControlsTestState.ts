@@ -41,4 +41,5 @@ export interface IControlsTestState {
   termStoreInfo: ITermStoreInfo;
   termSetInfo: ITermSetInfo;
   testTerms: ITermInfo[];
+  chartV2LegendPosition: 'top' | 'bottom' | 'left' | 'right';
 }

@@ -1,16 +1,23 @@
 import * as React from 'react';
 import { IAccessibleChartTableState, IAccessibleChartTableProps } from './AccessibleChartTable.types';
 import styles from './ChartControl.module.scss';
-import { ChartDataSets } from 'chart.js-old';
+import { ChartDataset, Chart } from 'chart.js/auto';
 import { Guid } from '@microsoft/sp-core-library';
 import { css } from '@fluentui/react/lib/Utilities';
 import { escape } from '@microsoft/sp-lodash-subset';
 
 export class AccessibleChartTable extends React.Component<IAccessibleChartTableProps, IAccessibleChartTableState> {
+  constructor(props: IAccessibleChartTableProps) {
+    super(props);
+
+    //Chart.defaults.datasets.line.showLine = false;
+  }
   public render(): React.ReactElement<IAccessibleChartTableProps> {
     const {
       onRenderTable,
-      data
+      data,
+      key,
+      className
     } = this.props;
 
     if (data === undefined || data.datasets === undefined || data.datasets.length < 1) {
@@ -27,7 +34,7 @@ export class AccessibleChartTable extends React.Component<IAccessibleChartTableP
     const tableBody: JSX.Element[] = this._renderTableBody();
 
     return (
-      <div className={css(styles.accessibleTable, this.props.className)}>
+      <div key={key} className={css(styles.accessibleTable, className)}>
         {tableBody && tableBody.length > 0 ?
           <table >
             {this._renderCaption()}
@@ -73,7 +80,7 @@ export class AccessibleChartTable extends React.Component<IAccessibleChartTableP
 
     // See if there are labels; we'll need them for the headers
     let hasLabels: boolean = true;
-    datasets.forEach((dataSet: ChartDataSets) => {
+    datasets.forEach((dataSet: ChartDataset) => {
       if (dataSet.label === undefined) {
         hasLabels = false;
       }
@@ -107,7 +114,7 @@ export class AccessibleChartTable extends React.Component<IAccessibleChartTableP
       && chartOptions.scales.xAxes[0].scaleLabel.labelString;
 
     // Generate the X asix table cells
-    const xHeaderCells: JSX.Element[] = datasets.map((dataSet: ChartDataSets) => {
+    const xHeaderCells: JSX.Element[] = datasets.map((dataSet: ChartDataset) => {
       return <th scope='col' key={`colHeading-${Guid.newGuid().toString()}`}>{escape(dataSet.label)}</th>;
     });
 
@@ -134,7 +141,7 @@ export class AccessibleChartTable extends React.Component<IAccessibleChartTableP
     // The data must have matching labels to render
     // otherwise this is pointless
     return data.labels && data.labels.map((labelValue: string, rowIndex: number) => {
-      const cells: JSX.Element[] = data.datasets.map((dataSet: ChartDataSets, dsIndex: number) => {
+      const cells: JSX.Element[] = data.datasets.map((dataSet: ChartDataset, dsIndex: number) => {
         return <td key={`dataCell-${Guid.newGuid().toString()}`}>{dataSet.data[rowIndex]}</td>;
       });
       return <tr key={`dataRow-${Guid.newGuid().toString()}`}>
@@ -161,14 +168,14 @@ export class AccessibleChartTable extends React.Component<IAccessibleChartTableP
     }
 
     // No caption. Look for the title
-    if (chartOptions && chartOptions.title && chartOptions.title.text) {
+    if (chartOptions && chartOptions.plugins && chartOptions.plugins.title && chartOptions.plugins.title.text) {
       // ChartJs supports titles in a string array to make them multiline
-      if (chartOptions.title.text instanceof Array) {
+      if (chartOptions.plugins.title.text instanceof Array) {
         // If we're using an array, join them into a single string
-        return chartOptions.title.text.join(' ');
+        return chartOptions.plugins.title.text.join(' ');
       } else {
         // Return the title
-        return chartOptions.title.text;
+        return chartOptions.plugins.title.text;
       }
     }
 

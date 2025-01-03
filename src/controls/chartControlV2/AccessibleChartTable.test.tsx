@@ -3,9 +3,11 @@
 import * as React from 'react';
 import { expect } from 'chai';
 import { mount, ReactWrapper } from 'enzyme';
-import { AccessibleChartTable, ChartType } from './';
+import { AccessibleChartTable, ChartTypeV2 } from './';
 import styles from './ChartControl.module.scss';
-import Chart from 'chart.js-old';
+import { BubbleDataPoint, ChartData, ChartTypeRegistry, Point, ChartOptions } from 'chart.js/auto';
+
+type DatasourceType = ChartData<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint)[], unknown>;
 
 describe('<AccessibleChartTable />', () => {
   let tableControl: ReactWrapper;
@@ -20,7 +22,7 @@ describe('<AccessibleChartTable />', () => {
   const dummyDatasetData: number[] = [11000, 6200, 5800, 300];
   const dummyDatasetLabel2: string = "Minions";
   const dummyDatasetData2: number[] = [12000, 7200, 6800, 400];
-  const dummyData: Chart.ChartData = {
+  const dummyData: DatasourceType = {
     labels: dummyLabels,
     datasets: [
       {
@@ -30,7 +32,7 @@ describe('<AccessibleChartTable />', () => {
     ]
   };
 
-  const dummyDataNoLabels: Chart.ChartData = {
+  const dummyDataNoLabels: DatasourceType = {
     datasets: [
       {
         label: dummyDatasetLabel,
@@ -39,29 +41,28 @@ describe('<AccessibleChartTable />', () => {
     ]
   };
 
-  const dummyOptions: Chart.ChartOptions = {
-    title: {
-      text: dummyTitle
+  const dummyOptions: ChartOptions = {
+    plugins: {
+      title: {
+        display: true,
+        text: dummyTitle
+      }
     },
     scales: {
-      xAxes: [
-        {
-          scaleLabel: {
-            labelString: dummyXAxisLabel
-          }
+      x: {
+        title: {
+          text: dummyXAxisLabel
         }
-      ],
-      yAxes: [
-        {
-          scaleLabel: {
-            labelString: dummyYAxisLabel
-          }
+      },
+      y: {
+        title: {
+          text: dummyYAxisLabel
         }
-      ]
+      }
     }
   };
 
-  const dummyMultisetData: Chart.ChartData = {
+  const dummyMultisetData: DatasourceType = {
     labels: dummyLabels,
     datasets: [
       {
@@ -82,43 +83,43 @@ describe('<AccessibleChartTable />', () => {
 
 
   it('Should render only one table', (done) => {
-    tableControl = mount(<AccessibleChartTable chartType={ChartType.Bar} data={dummyData}  />);
+    tableControl = mount(<AccessibleChartTable chartType={ChartTypeV2.Bar} data={dummyData}  />);
     expect(tableControl.find(`div.${styles.accessibleTable}`)).to.have.length(1);
     done();
   });
 
   it('Should render with a custom className if one is provided', (done) => {
-    tableControl = mount(<AccessibleChartTable chartType={ChartType.Bar} data={dummyData} className={dummyClass} />);
+    tableControl = mount(<AccessibleChartTable chartType={ChartTypeV2.Bar} data={dummyData} className={dummyClass} />);
     expect(tableControl.find(`div.${dummyClass}`)).to.have.length(1);
     done();
   });
 
   it('Should render a caption if one is provided', (done) => {
-    tableControl = mount(<AccessibleChartTable chartType={ChartType.Bar} data={dummyData} caption={dummyCaption} />);
+    tableControl = mount(<AccessibleChartTable chartType={ChartTypeV2.Bar} data={dummyData} caption={dummyCaption} />);
     expect(tableControl.find(`div.${styles.accessibleTable} table caption`).text()).to.be.equal(dummyCaption);
     done();
   });
 
   it('Should render a caption if no caption is provided but a title is available', (done) => {
-    tableControl = mount(<AccessibleChartTable chartType={ChartType.Bar} data={dummyData} chartOptions={dummyOptions} />);
+    tableControl = mount(<AccessibleChartTable chartType={ChartTypeV2.Bar} data={dummyData} chartOptions={dummyOptions} />);
     expect(tableControl.find(`div.${styles.accessibleTable} table caption`).text()).to.be.equal(dummyTitle);
     done();
   });
 
   it('Should prioritize the caption if both caption and title are provided', (done) => {
-    tableControl = mount(<AccessibleChartTable chartType={ChartType.Bar} data={dummyData} chartOptions={dummyOptions} caption={dummyCaption} />);
+    tableControl = mount(<AccessibleChartTable chartType={ChartTypeV2.Bar} data={dummyData} chartOptions={dummyOptions} caption={dummyCaption} />);
     expect(tableControl.find(`div.${styles.accessibleTable} table caption`).text()).to.be.equal(dummyCaption);
     done();
   });
 
   it('Should render the same number of rows as there are data elements', (done) => {
-    tableControl = mount(<AccessibleChartTable chartType={ChartType.Bar} data={dummyData}  />);
+    tableControl = mount(<AccessibleChartTable chartType={ChartTypeV2.Bar} data={dummyData}  />);
     expect(tableControl.find(`div.${styles.accessibleTable} table tbody tr`)).to.have.length(4);
     done();
   });
 
   it('Should render a table matching the data provided', (done) => {
-    tableControl = mount(<AccessibleChartTable chartType={ChartType.Bar} data={dummyData}  />);
+    tableControl = mount(<AccessibleChartTable chartType={ChartTypeV2.Bar} data={dummyData}  />);
     expect(tableControl.find(`div.${styles.accessibleTable} table tbody tr`).at(0).find('th').at(0).text()).to.equal('Human');
     expect(tableControl.find(`div.${styles.accessibleTable} table tbody tr`).at(1).find('th').at(0).text()).to.equal('Chimp');
     expect(tableControl.find(`div.${styles.accessibleTable} table tbody tr`).at(2).find('th').at(0).text()).to.equal('Dolphin');
@@ -131,7 +132,7 @@ describe('<AccessibleChartTable />', () => {
   });
 
   it('Should include a summary in the caption if one is provided', (done) => {
-    tableControl = mount(<AccessibleChartTable chartType={ChartType.Bar} data={dummyData} summary={dummySummary} caption={dummyCaption} />);
+    tableControl = mount(<AccessibleChartTable chartType={ChartTypeV2.Bar} data={dummyData} summary={dummySummary} caption={dummyCaption} />);
     expect(tableControl.find(`div.${styles.accessibleTable} table caption br`)).to.have.length(1);
     expect(tableControl.find(`div.${styles.accessibleTable} table caption span`)).to.have.length(1);
     expect(tableControl.find(`div.${styles.accessibleTable} table caption span`).text()).to.be.equals(dummySummary);
@@ -139,7 +140,7 @@ describe('<AccessibleChartTable />', () => {
   });
 
   it('Should include a summary in the caption if one is provided -- even if no title is provided', (done) => {
-    tableControl = mount(<AccessibleChartTable chartType={ChartType.Bar} data={dummyData} summary={dummySummary}/>);
+    tableControl = mount(<AccessibleChartTable chartType={ChartTypeV2.Bar} data={dummyData} summary={dummySummary}/>);
     expect(tableControl.find(`div.${styles.accessibleTable} table caption br`)).to.have.length(0);
     expect(tableControl.find(`div.${styles.accessibleTable} table caption span`)).to.have.length(1);
     expect(tableControl.find(`div.${styles.accessibleTable} table caption span`).text()).to.be.equals(dummySummary);
@@ -147,13 +148,13 @@ describe('<AccessibleChartTable />', () => {
   });
 
   it('Should do nothing if there are no data labels', (done) => {
-    tableControl = mount(<AccessibleChartTable chartType={ChartType.Bar} data={dummyDataNoLabels}  />);
+    tableControl = mount(<AccessibleChartTable chartType={ChartTypeV2.Bar} data={dummyDataNoLabels}  />);
     expect(tableControl.find(`div.${styles.accessibleTable} table`)).to.have.length(0);
     done();
   });
 
   it('Should render an X and Y label if axis labels are provided', (done) => {
-    tableControl = mount(<AccessibleChartTable chartType={ChartType.Bar} data={dummyData} chartOptions={dummyOptions} />);
+    tableControl = mount(<AccessibleChartTable chartType={ChartTypeV2.Bar} data={dummyData} chartOptions={dummyOptions} />);
     expect(tableControl.find(`div.${styles.accessibleTable} table thead tr`).at(0).find('th').at(0).text()).to.be.equal("");
     expect(tableControl.find(`div.${styles.accessibleTable} table thead tr`).at(0).find('th')).to.have.length(2);
     expect(tableControl.find(`div.${styles.accessibleTable} table thead tr`).at(0).find('th').at(1).text()).to.be.equal(dummyYAxisLabel);
@@ -165,7 +166,7 @@ describe('<AccessibleChartTable />', () => {
   });
 
   it('Should render multi dataset labels', (done) => {
-    tableControl = mount(<AccessibleChartTable chartType={ChartType.Bar} data={dummyMultisetData} chartOptions={dummyOptions} />);
+    tableControl = mount(<AccessibleChartTable chartType={ChartTypeV2.Bar} data={dummyMultisetData} chartOptions={dummyOptions} />);
     expect(tableControl.find(`div.${styles.accessibleTable} table thead tr`).at(0).find('th').at(0).text()).to.be.equal("");
     expect(tableControl.find(`div.${styles.accessibleTable} table thead tr`).at(0).find('th')).to.have.length(2);
     expect(tableControl.find(`div.${styles.accessibleTable} table thead tr`).at(0).find('th').at(1).text()).to.be.equal(dummyYAxisLabel);
@@ -178,7 +179,7 @@ describe('<AccessibleChartTable />', () => {
   });
 
   it('Should render a multi dataset table matching the data provided', (done) => {
-    tableControl = mount(<AccessibleChartTable chartType={ChartType.Bar} data={dummyMultisetData}  />);
+    tableControl = mount(<AccessibleChartTable chartType={ChartTypeV2.Bar} data={dummyMultisetData}  />);
     expect(tableControl.find(`div.${styles.accessibleTable} table tbody tr`).at(0).find('th').at(0).text()).to.equal('Human');
     expect(tableControl.find(`div.${styles.accessibleTable} table tbody tr`).at(1).find('th').at(0).text()).to.equal('Chimp');
     expect(tableControl.find(`div.${styles.accessibleTable} table tbody tr`).at(2).find('th').at(0).text()).to.equal('Dolphin');

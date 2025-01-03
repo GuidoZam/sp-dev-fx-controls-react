@@ -2,11 +2,18 @@
 * Parameter descriptions are from https://www.chartjs.org/docs/latest, where possible.
 */
 import {
+  ActiveElement,
+  BubbleDataPoint,
   Chart,
-  ChartSize,
   ChartData,
-  ChartOptions
-} from 'chart.js-old';
+  ChartEvent,
+  ChartOptions,
+  ChartType,
+  ChartTypeRegistry,
+  Point,
+  Plugin,
+  DefaultDataPoint
+} from "chart.js/auto";
 
 /**
  * The properties for the ChartComponent object
@@ -20,17 +27,19 @@ export interface IChartControlProps {
 
   /**
   The data to be displayed in the chart
-  @type {ChartData}
+  @type {ChartData<ChartType, DefaultDataPoint<ChartType>, unknown>}
   */
-  data?: ChartData;
+  data?: ChartData<ChartType, DefaultDataPoint<ChartType>, unknown>;
 
   /**
   Promise to the data to be displayed in the chart.
   ChartControl will automatically display data when
   promise returns.
-  @type {Promise<ChartData>}
+  @type {Promise<ChartData<ChartType, DefaultDataPoint<ChartType>, unknown>>}
   */
-  datapromise?: Promise<Chart.ChartData>;
+  datapromise?: Promise<
+    ChartData<ChartType, DefaultDataPoint<ChartType>, unknown>
+  >;
 
   /**
   If using datapromises, sets the content to display while loading the data.
@@ -51,14 +60,29 @@ export interface IChartControlProps {
   options?: ChartOptions;
 
   /**
-   The type of chart to render
-   @type {ChartType}
+  The type of chart to render
+  @type {ChartType}
    */
   type: ChartType;
 
   /**
-   The custom CSS classname
-   @type {string}
+  The identifier of the chart container
+   */
+  key?: string;
+
+  /**
+  The width of the chart
+   */
+  width?: number;
+
+  /**
+  The height of the chart
+   */
+  height?: number;
+
+  /**
+  The custom CSS classname
+  @type {string}
    */
   className?: string;
 
@@ -69,12 +93,12 @@ export interface IChartControlProps {
   palette?: ChartPalette;
 
   /**
-   Plugins are the most efficient way to customize or change the default behavior of a chart.
-   They have been introduced in chart.js version 2.1.0 (global plugins only) and extended
-   in version 2.5.0 (per chart plugins and options).
-   @type {object[]} an array of plugins
+  Plugins are the most efficient way to customize or change the default behavior of a chart.
+  They have been introduced in chart.js version 2.1.0 (global plugins only) and extended
+  in version 2.5.0 (per chart plugins and options).
+  @type {Plugin<ChartType>[]} an array of plugins
    */
-  plugins?: object[];
+  plugins?: Plugin<ChartType>[];
 
   /**
    * Enables or disables the chart control's ability to detect the environment themes.
@@ -87,28 +111,45 @@ export interface IChartControlProps {
    * Called in the context of the chart and passed the event and an array of active elements.
    * If onClick is defined in the chart options, this callback will be ignored.
    * @param event
-   * @param activeElements
+   * @param elements
+   * @param chart
    */
-  onClick?(event?: MouseEvent, activeElements?: Array<{}>): void;
+  onClick?(
+    event: ChartEvent,
+    elements: ActiveElement[],
+    chart: Chart<
+      keyof ChartTypeRegistry,
+      (number | [number, number] | Point | BubbleDataPoint)[],
+      unknown
+    >
+  ): void;
 
   /**
    * Called when any of the events fire.
    * Called in the context of the chart and passed the event and an array of active elements (bars, points, etc).
    * If onHover is defined in the chart options, this callback will be ignored
-   * @param chart @type {IChartJs}
-   * @param event  @type {MouseEvent}
-   * @param activeElements @type {Array<{}>}
+   * @param event  @type {ChartEvent}
+   * @param elements @type {ActiveElement[]}
+   * @param chart @type {Chart<keyof ChartTypeRegistry,(number | [number, number] | Point | BubbleDataPoint)[], unknown>}
    */
-  onHover?(chart: Chart, event: MouseEvent, activeElements: Array<{}>): void;
+  onHover?(
+    event: ChartEvent,
+    elements: ActiveElement[],
+    chart: Chart<
+      keyof ChartTypeRegistry,
+      (number | [number, number] | Point | BubbleDataPoint)[],
+      unknown
+    >
+  ): void;
 
   /**
-    * Called when a resize occurs. Gets passed two arguments: the chart instance and the new size.
-    * If onResize is defined in the chart options, this callback will be ignored
-    * OnResize doesn't get called when the chart doesn't use relative positioning.
-    * @param chart @type {IChartJs}  the chart instance
-    * @param newSize @type {IChartSize} the new size.
-    */
-  onResize?(chart: Chart, newSize: ChartSize): void;
+   * Called when a resize occurs. Gets passed two arguments: the chart instance and the new size.
+   * If onResize is defined in the chart options, this callback will be ignored
+   * OnResize doesn't get called when the chart doesn't use relative positioning.
+   * @param chart @type {IChartJs}  the chart instance
+   * @param newSize @type {{ width: number; height: number }} the new size.
+   */
+  onResize?(chart: Chart, newSize: { width: number; height: number }): void;
 }
 
 /**
@@ -116,7 +157,7 @@ export interface IChartControlProps {
  */
 export interface IChartControlState {
   isLoading: boolean;
-  data?: Chart.ChartData;
+  data?: ChartData<ChartType, DefaultDataPoint<ChartType>, unknown>;
   rejected?: {};
 }
 
@@ -304,36 +345,22 @@ export interface IChartPlugin {
   beforeEvent?(chartInstance: Chart, event: Event, options?: {}): void;
   afterEvent?(chartInstance: Chart, event: Event, options?: {}): void;
 
-  resize?(chartInstance: Chart, newChartSize: Chart.ChartSize, options?: {}): void;
+  resize?(chartInstance: Chart, newChartSize: { width: number; height: number }): void;
   destroy?(chartInstance: Chart): void;
 }
 
 /**
  * The types of charts available
  */
-export type ChartType = 'line'
-  | 'bar'
-  | 'horizontalBar'
-  | 'radar'
-  | 'doughnut'
-  | 'polarArea'
-  | 'bubble'
-  | 'pie'
-  | 'scatter';
-
-/**
- * The types of charts available
- */
 /* tslint:disable */
-export const ChartType = {
-  Line: 'line' as ChartType,
-  Bar: 'bar' as ChartType,
-  HorizontalBar: 'horizontalBar' as ChartType,
-  Radar: 'radar' as ChartType,
-  Doughnut: 'doughnut' as ChartType,
-  PolarArea: 'polarArea' as ChartType,
-  Bubble: 'bubble' as ChartType,
-  Pie: 'pie' as ChartType,
-  Scatter: 'scatter' as ChartType
+export const ChartTypeV2 = {
+  Line: "line" as keyof ChartTypeRegistry,
+  Bar: "bar" as keyof ChartTypeRegistry,
+  Radar: "radar" as keyof ChartTypeRegistry,
+  Doughnut: "doughnut" as keyof ChartTypeRegistry,
+  PolarArea: "polarArea" as keyof ChartTypeRegistry,
+  Bubble: "bubble" as keyof ChartTypeRegistry,
+  Pie: "pie" as keyof ChartTypeRegistry,
+  Scatter: "scatter" as keyof ChartTypeRegistry,
 };
 /* tslint:enable */

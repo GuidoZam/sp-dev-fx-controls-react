@@ -2,12 +2,14 @@ import * as React from 'react';
 import { IChartControlState, IChartControlProps } from './ChartControl.types';
 import styles from './ChartControl.module.scss';
 import { css } from '@fluentui/react/lib/Utilities';
-import { Chart, ChartSize } from 'chart.js-old';
+import Chart, { ActiveElement, BubbleDataPoint, ChartData, ChartDataset, ChartEvent, ChartType, ChartTypeRegistry, DefaultDataPoint, Point } from 'chart.js/auto';
 import { PaletteGenerator } from './PaletteGenerator';
 import { AccessibleChartTable } from './AccessibleChartTable';
 import * as telemetry from '../../common/telemetry';
 import { ChartPalette } from './ChartControl.types';
 import { ThemeColorHelper } from '../../common/utilities/ThemeColorHelper';
+import { element } from 'prop-types';
+import { Guid } from '@microsoft/sp-core-library';
 
 export class ChartControl extends React.Component<IChartControlProps, IChartControlState> {
 
@@ -43,7 +45,7 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
   constructor(props: IChartControlProps) {
     super(props);
 
-    telemetry.track('ReactChartComponent', {
+    telemetry.track('ReactChartComponentV2', {
       type: !!props.type,
       className: !!props.className,
       palette: !!props.palette,
@@ -125,7 +127,10 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
       accessibility,
       useTheme,
       options,
-      data
+      data,
+      key,
+      width,
+      height
     } = this.props;
 
     // If we're still loading, try to show the loading template
@@ -153,11 +158,18 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
     const alternateText: string = accessibility.alternateText;
 
     return (
-      <div className={css(styles.chartComponent, (useTheme ? styles.themed : null), this.props.className)} >
+      <div
+        className={css(styles.chartComponent, (useTheme ? styles.themed : null), this.props.className)}
+        style={{
+          width: width ? width : '100%',
+          height: height ? height : '100%'
+        }}
+      >
         <canvas ref={this._linkCanvas} role='img' aria-label={alternateText} />
         {
           accessibility.enable === undefined || accessibility.enable ? (
             <AccessibleChartTable
+              key={key ?? `chart-${Guid.newGuid().toString()}`}
               chartType={type}
               data={data || this.state.data}
               chartOptions={options}
@@ -179,47 +191,47 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
    * lazy (boolean): If true, the animation can be interrupted by other animations
    * easing (string): The animation easing function.
    */
-  public update(config?: number | boolean | string): void {
-    this._chart.update(config);
+  public update(mode?: "resize" | "reset" | "none" | "hide" | "show" | "default" | "active" | ((ctx: {
+    datasetIndex: number;
+  }) => "resize" | "reset" | "none" | "hide" | "show" | "default" | "active")): void {
+    this._chart.update(mode);
   }
 
   /**
    * Triggers a redraw of all chart elements.
    * Note, this does not update elements for new data. Use .update() in that case.
-   * @param config  duration is the time for the animation of the redraw in milliseconds
-    lazy is a boolean. If true, the animation can be interrupted by other animations
    */
-  public renderChart(config: {}): void {
-    this._chart.render(config);
+  public renderChart(): void {
+    this._chart.render();
   }
 
   /**
-   Use this to stop any current animation loop.
-   This will pause the chart during any current animation frame.
-   Call .render() to re-animate.
+  Use this to stop any current animation loop.
+  This will pause the chart during any current animation frame.
+  Call .render() to re-animate.
    */
   public stop(): void {
     this._chart.stop();
   }
 
   /**
-   Will clear the chart canvas.
-   Used extensively internally between animation frames, but you might find it useful.
-   */
+  Will clear the chart canvas.
+  Used extensively internally between animation frames, but you might find it useful.
+  */
   public clear(): void {
     this._chart.clear();
   }
 
   /**
- Returns a base 64 encoded string of the chart in it's current state.
- @returns {string} A base-64 encoded PNG data URL containing image of the chart in its current state
- */
+  Returns a base 64 encoded string of the chart in it's current state.
+  @returns {string} A base-64 encoded PNG data URL containing image of the chart in its current state
+  */
   public toBase64Image(): string {
     return this._chart.toBase64Image();
   }
 
   /**
-   Return the chartjs instance
+  Return the chartjs instance
    */
   //  tslint:disable-next-line no-any
   public getChart(): Chart {
@@ -235,13 +247,13 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
   }
 
   /**
-   Looks for the element under the event point,
-   then returns all elements from that dataset.
-   This is used internally for 'dataset' mode highlighting
+  Looks for the element under the event point,
+  then returns all elements from that dataset.
+  This is used internally for 'dataset' mode highlighting
    * @param e An array of elements
    */
   public getDatasetAtEvent(e: MouseEvent): Array<{}> {
-    return this.getChart().getDatasetAtEvent(e);
+    return this.getChart().getElementsAtEventForMode(e, 'dataset', { intersect: true }, false);
   }
 
   /**
@@ -253,45 +265,51 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
  * @param e the first element at the event point.
  */
   public getElementAtEvent(e: MouseEvent): {} {
-    return this.getChart().getElementAtEvent(e);
+    return this.getChart().getElementsAtEventForMode(e, 'nearest', { intersect: true }, false);
   }
 
   /**
   Looks for the element under the event point, then returns all elements
   at the same data index. This is used internally for 'label' mode highlighting.
- Calling getElementsAtEvent(event) on your Chart instance passing an argument of an
- event, or jQuery event, will return the point elements that are at that
- the same position of that event.
+  Calling getElementsAtEvent(event) on your Chart instance passing an argument of an
+  event, or jQuery event, will return the point elements that are at that
+  the same position of that event.
   * @param e
   */
   public getElementsAtEvent(e: MouseEvent): Array<{}> {
-    return this.getChart().getElementsAtEvent(e);
+    return this.getChart().getElementsAtEventForMode(e, 'index', { intersect: true }, false);
   }
 
   /**
    * Initializes the chart
    * @param props chart control properties
    */
-  private _initChart(props: IChartControlProps, data: Chart.ChartData): void {
+  private _initChart(props: IChartControlProps, data: ChartData<ChartType, DefaultDataPoint<ChartType>, unknown>): void {
     const {
       options,
       type,
       plugins,
-      useTheme
+      useTheme,
+      onClick,
+      onHover,
+      onResize
     } = props;
 
     // add event handlers -- if they weren't already provided through options
-    if (this.props.onClick !== undefined) {
+    if (onClick !== undefined) {
       if (options.onClick === undefined) {
-        options.onClick = this.props.onClick;
+        options.onClick = onClick;
       }
     }
 
     // Add onhover
-    if (this.props.onHover !== undefined) {
+    if (onHover !== undefined) {
       if (options.onHover === undefined) {
-        options.onHover = (event: MouseEvent, activeElements: {}[]) => {
-          this.props.onHover(this.getChart(), event, activeElements);
+        options.onHover = (event: ChartEvent,
+          elements: ActiveElement[],
+          chart: Chart<keyof ChartTypeRegistry, (number | [number, number] | Point | BubbleDataPoint)[], unknown>)
+          : void => {
+          onHover(event, elements, chart);
         };
       }
     }
@@ -299,10 +317,10 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
     // Add onResize
     // Note that onResize won't work unless the chart is
     // position: relative and has a height and width defined
-    if (this.props.onResize !== undefined) {
+    if (onResize !== undefined) {
       if (options.onResize === undefined) {
-        options.onResize = (newSize: ChartSize) => {
-          this.props.onResize(this.getChart(), newSize);
+        options.onResize = (chart: Chart, size: { width: number; height: number }) => {
+          onResize(this.getChart(), size);
         };
       }
     }
@@ -321,10 +339,10 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
     });
   }
 
-  private _applyDatasetPalette(data: Chart.ChartData): void {
+  private _applyDatasetPalette(data: ChartData<ChartType, DefaultDataPoint<ChartType>, unknown>): void {
     try {
       // Get the dataset
-      const datasets: Chart.ChartDataSets[] = data.datasets;
+      const datasets: ChartDataset<ChartType, DefaultDataPoint<ChartType>>[] = data.datasets;
 
       if (datasets !== undefined) {
         datasets.forEach(dataset => {
@@ -336,41 +354,41 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
           }
         });
       }
-    } catch {
+    } catch (error) {
       // no-op;
     }
   }
 
   private _applyChartThemes(): void {
     try {
-      Chart.defaults.global.defaultFontColor = ThemeColorHelper.GetThemeColor(styles.defaultFontColor);
-      Chart.defaults.global.defaultFontFamily = styles.defaultFontFamily;
-      Chart.defaults.global.defaultFontSize = this._getFontSizeNumber(styles.defaultFontSize);
-      Chart.defaults.global.title.fontColor = ThemeColorHelper.GetThemeColor(styles.titleColor);
-      Chart.defaults.global.title.fontFamily = styles.titleFont;
-      Chart.defaults.global.title.fontSize = this._getFontSizeNumber(styles.titleFontSize);
-      Chart.defaults.global.legend.labels.fontColor = ThemeColorHelper.GetThemeColor(styles.legendColor);
-      Chart.defaults.global.legend.labels.fontFamily = styles.legendFont;
-      Chart.defaults.global.legend.labels.fontSize = this._getFontSizeNumber(styles.legendFontSize);
-      Chart.defaults.global.tooltips.backgroundColor = ThemeColorHelper.GetThemeColor(styles.tooltipBackgroundColor);
-      Chart.defaults.global.tooltips.bodyFontColor = ThemeColorHelper.GetThemeColor(styles.tooltipBodyColor);
-      Chart.defaults.global.tooltips.bodyFontFamily = styles.tooltipFont;
-      Chart.defaults.global.tooltips.bodyFontSize = this._getFontSizeNumber(styles.tooltipFontSize);
-      Chart.defaults.global.tooltips.titleFontColor = ThemeColorHelper.GetThemeColor(styles.tooltipTitleColor);
-      Chart.defaults.global.tooltips.titleFontFamily = styles.tooltipTitleFont;
-      Chart.defaults.global.tooltips.titleFontSize = this._getFontSizeNumber(styles.tooltipTitleFontSize);
-      Chart.defaults.global.tooltips.footerFontColor = ThemeColorHelper.GetThemeColor(styles.tooltipFooterColor);
-      Chart.defaults.global.tooltips.footerFontFamily = styles.tooltipFooterFont;
-      Chart.defaults.global.tooltips.footerFontSize = this._getFontSizeNumber(styles.tooltipFooterFontSize);
-      Chart.defaults.global.tooltips.borderColor = ThemeColorHelper.GetThemeColor(styles.tooltipBorderColor);
+      Chart.defaults.color = ThemeColorHelper.GetThemeColor(styles.defaultFontColor);
+      Chart.defaults.font.family = styles.defaultFontFamily;
+      Chart.defaults.font.size = this._getFontSizeNumber(styles.defaultFontSize);
+      Chart.defaults.plugins.title.color = ThemeColorHelper.GetThemeColor(styles.titleColor);
+      Chart.defaults.plugins.title.font["family"] = styles.titleFont;
+      Chart.defaults.plugins.title.font["size"] = this._getFontSizeNumber(styles.titleFontSize);
+      Chart.defaults.plugins.legend.labels.color = ThemeColorHelper.GetThemeColor(styles.legendColor);
+      Chart.defaults.plugins.legend.labels.font["family"] = styles.legendFont;
+      Chart.defaults.plugins.legend.labels.font["size"] = this._getFontSizeNumber(styles.legendFontSize);
+      Chart.defaults.plugins.tooltip.backgroundColor = ThemeColorHelper.GetThemeColor(styles.tooltipBackgroundColor);
+      Chart.defaults.plugins.tooltip.bodyColor = ThemeColorHelper.GetThemeColor(styles.tooltipBodyColor);
+      Chart.defaults.plugins.tooltip.bodyFont["family"] = styles.tooltipFont;
+      Chart.defaults.plugins.tooltip.bodyFont["size"] = this._getFontSizeNumber(styles.tooltipFontSize);
+      Chart.defaults.plugins.tooltip.titleColor = ThemeColorHelper.GetThemeColor(styles.tooltipTitleColor);
+      Chart.defaults.plugins.tooltip.titleFont["family"] = styles.tooltipTitleFont;
+      Chart.defaults.plugins.tooltip.titleFont["size"] = this._getFontSizeNumber(styles.tooltipTitleFontSize);
+      Chart.defaults.plugins.tooltip.footerColor = ThemeColorHelper.GetThemeColor(styles.tooltipFooterColor);
+      Chart.defaults.plugins.tooltip.footerFont["family"] = styles.tooltipFooterFont;
+      Chart.defaults.plugins.tooltip.footerFont["size"] = this._getFontSizeNumber(styles.tooltipFooterFontSize);
+      Chart.defaults.plugins.tooltip.borderColor = ThemeColorHelper.GetThemeColor(styles.tooltipBorderColor);
 
       if (Chart.defaults
         && Chart.defaults.scale
-        && Chart.defaults.scale.gridLines
-        && Chart.defaults.scale.gridLines.color) {
-        Chart.defaults.scale.gridLines.color = ThemeColorHelper.GetThemeColor(styles.lineColor);
+        && Chart.defaults.scale.grid
+        && Chart.defaults.scale.grid.color) {
+        Chart.defaults.scale.grid.color = ThemeColorHelper.GetThemeColor(styles.lineColor);
       }
-    } catch {
+    } catch (error) {
       // no-op;
     }
   }
@@ -380,7 +398,7 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
       if (this._chart !== undefined) {
         this._chart.destroy();
       }
-    } catch {
+    } catch (error) {
       // no-op;
     }
   }
@@ -394,7 +412,7 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
   private _getFontSizeNumber(value: string): number {
     try {
       return parseInt(value.replace('px', ''), 10);
-    } catch {
+    } catch (error) {
       return undefined;
     }
   }
@@ -403,7 +421,7 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
    * Gets the results of a promise and returns it to the chart
    * @param promise
    */
-  private _doPromise(promise: Promise<Chart.ChartData>): void {
+  private _doPromise(promise: Promise<ChartData<ChartType, DefaultDataPoint<ChartType>, unknown>>): void {
     this.setState({
       isLoading: true
     }, () => {
