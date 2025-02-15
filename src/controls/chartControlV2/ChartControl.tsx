@@ -8,7 +8,6 @@ import { AccessibleChartTable } from './AccessibleChartTable';
 import * as telemetry from '../../common/telemetry';
 import { ChartPalette } from './ChartControl.types';
 import { ThemeColorHelper } from '../../common/utilities/ThemeColorHelper';
-import { element } from 'prop-types';
 import { Guid } from '@microsoft/sp-core-library';
 
 export class ChartControl extends React.Component<IChartControlProps, IChartControlState> {
@@ -42,6 +41,11 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
    */
   private _canvasElem: HTMLCanvasElement = undefined;
 
+  /**
+   * The canvas element unique identifier for this instance
+   */
+  private _canvasId: string = `${Guid.newGuid().toString()}`;
+
   constructor(props: IChartControlProps) {
     super(props);
 
@@ -57,12 +61,16 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
       rejected: undefined,
       data: undefined
     };
+
+    this._linkCanvas = this._linkCanvas.bind(this);
   }
 
   /**
    * componentDidMount lifecycle hook
    */
   public componentDidMount(): void {
+    // Ensure _canvasElem is assigned a value
+    this._canvasElem = document.getElementById(this._canvasId) as HTMLCanvasElement;
 
     if (this.props.datapromise) {
       this._doPromise(this.props.datapromise);
@@ -70,6 +78,7 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
       this._initChart(this.props, this.props.data);
     }
   }
+
   /**
    * componentWillReceiveProps lifecycle hook
    *
@@ -109,6 +118,13 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
       accessibility,
       useTheme,
       palette } = this.props;
+    console.log("shouldComponentUpdate", data !== nextProps.data ||
+      options !== nextProps.options ||
+      plugins !== nextProps.plugins ||
+      className !== nextProps.className ||
+      useTheme !== nextProps.useTheme ||
+      palette !== nextProps.palette ||
+      accessibility !== nextProps.accessibility);
     return data !== nextProps.data ||
       options !== nextProps.options ||
       plugins !== nextProps.plugins ||
@@ -165,7 +181,7 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
           height: height ? height : '100%'
         }}
       >
-        <canvas ref={this._linkCanvas} role='img' aria-label={alternateText} />
+        <canvas id={this._canvasId} ref={this._linkCanvas} role='img' aria-label={alternateText} />
         {
           accessibility.enable === undefined || accessibility.enable ? (
             <AccessibleChartTable
@@ -335,7 +351,7 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
       type: type,
       data: data,
       options: options,
-      plugins: plugins
+      plugins: plugins // TODO: remove plugins, they are included in options. Update the properties to reflect this.
     });
   }
 
@@ -356,6 +372,7 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
       }
     } catch (error) {
       // no-op;
+      console.error(error);
     }
   }
 
@@ -390,20 +407,23 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
       }
     } catch (error) {
       // no-op;
+      console.error(error);
     }
   }
 
   private _destroyChart(): void {
     try {
-      if (this._chart !== undefined) {
+      if (this._chart !== undefined || this._chart !== null) {
         this._chart.destroy();
       }
     } catch (error) {
       // no-op;
+      console.error(error);
     }
   }
 
   private _linkCanvas = (e: HTMLCanvasElement): void => {
+    console.log("_linkCanvas", e);
     this._canvasElem = e;
   }
 
@@ -413,6 +433,7 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
     try {
       return parseInt(value.replace('px', ''), 10);
     } catch (error) {
+      console.error(error);
       return undefined;
     }
   }

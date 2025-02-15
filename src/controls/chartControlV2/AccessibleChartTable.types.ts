@@ -1,4 +1,4 @@
-import { ChartData, ChartOptions, DefaultDataPoint, ChartType } from "chart.js";
+import { ChartData, ChartOptions, DefaultDataPoint, ChartType } from "chart.js/auto";
 
 /**
  * The properties for the Accessible Chart Table object

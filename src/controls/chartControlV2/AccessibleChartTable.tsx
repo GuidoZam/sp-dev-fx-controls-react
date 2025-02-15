@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IAccessibleChartTableState, IAccessibleChartTableProps } from './AccessibleChartTable.types';
 import styles from './ChartControl.module.scss';
-import { ChartDataset, Chart } from 'chart.js/auto';
+import { ChartDataset } from 'chart.js/auto';
 import { Guid } from '@microsoft/sp-core-library';
 import { css } from '@fluentui/react/lib/Utilities';
 import { escape } from '@microsoft/sp-lodash-subset';
@@ -94,9 +94,9 @@ export class AccessibleChartTable extends React.Component<IAccessibleChartTableP
     // Get the Y Axis label
     const yAxisLabel: string = chartOptions
       && chartOptions.scales
-      && chartOptions.scales.yAxes
-      && chartOptions.scales.yAxes[0].scaleLabel
-      && chartOptions.scales.yAxes[0].scaleLabel.labelString;
+      && chartOptions.scales.y
+      && chartOptions.scales.y["title"]
+      && chartOptions.scales.y["title"].text;
 
     // Generate the Y header row
     const yHeaderRow: JSX.Element = yAxisLabel
@@ -109,9 +109,9 @@ export class AccessibleChartTable extends React.Component<IAccessibleChartTableP
     const xAxisLabel: string =
       chartOptions
       && chartOptions.scales
-      && chartOptions.scales.xAxes
-      && chartOptions.scales.xAxes[0].scaleLabel
-      && chartOptions.scales.xAxes[0].scaleLabel.labelString;
+      && chartOptions.scales.x
+      && chartOptions.scales.x["title"]
+      && chartOptions.scales.x["title"].text;
 
     // Generate the X asix table cells
     const xHeaderCells: JSX.Element[] = datasets.map((dataSet: ChartDataset) => {

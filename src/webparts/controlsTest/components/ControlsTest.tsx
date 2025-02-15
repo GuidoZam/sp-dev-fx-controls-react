@@ -559,6 +559,13 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
     }]
   };
 
+  private _loadAsyncData(): Promise<any> {
+    return new Promise<ChartData>((resolve, reject) => {
+      console.log('_loadAsyncData');
+      resolve(this.chartDataV2);
+    });
+  }
+
   private chartDataV2Bubbles = {
     datasets: [{
       label: '# of Votes',
@@ -1632,7 +1639,10 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
           <ChartControlV2
             key="testChart-bar"
             type={ChartTypeV2.Bar}
-            data={this.chartDataV2}
+            //data={this.chartDataV2}
+            // TODO: check how to solve this
+            datapromise={this._loadAsyncData()}
+            loadingtemplate={() => <div>Please wait...</div>}
             options={{
               plugins: {
                 title: {
@@ -1664,6 +1674,9 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
             key="testChart-doughnut"
             type={ChartTypeV2.Doughnut}
             data={this.chartDataV2}
+            accessibility={{
+              enable: true,
+            }}
             options={{
               plugins: {
                 title: {
@@ -1702,6 +1715,10 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
               },
               scales: {
                 y: {
+                  title: {
+                    display: true,
+                    text: 'Y-axis'
+                  },
                   suggestedMin: 0,
                   suggestedMax: 20
                 }
