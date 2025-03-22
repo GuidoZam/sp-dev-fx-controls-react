@@ -2,13 +2,12 @@ import * as React from 'react';
 import { IChartControlState, IChartControlProps } from './ChartControl.types';
 import styles from './ChartControl.module.scss';
 import { css } from '@fluentui/react/lib/Utilities';
-import Chart, { ActiveElement, BubbleDataPoint, ChartData, ChartDataset, ChartEvent, ChartType, ChartTypeRegistry, DefaultDataPoint, Point } from 'chart.js/auto';
+import Chart, { ActiveElement, BubbleDataPoint, ChartData, ChartDataset, ChartEvent, ChartType, ChartTypeRegistry, DefaultDataPoint, FontSpec, Point } from 'chart.js/auto';
 import { PaletteGenerator } from './PaletteGenerator';
 import { AccessibleChartTable } from './AccessibleChartTable';
 import * as telemetry from '../../common/telemetry';
 import { ChartPalette } from './ChartControl.types';
 import { ThemeColorHelper } from '../../common/utilities/ThemeColorHelper';
-import { Guid } from '@microsoft/sp-core-library';
 
 export class ChartControl extends React.Component<IChartControlProps, IChartControlState> {
 
@@ -41,11 +40,6 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
    */
   private _canvasElem: HTMLCanvasElement = undefined;
 
-  /**
-   * The canvas element unique identifier for this instance
-   */
-  private _canvasId: string = `${Guid.newGuid().toString()}`;
-
   constructor(props: IChartControlProps) {
     super(props);
 
@@ -61,22 +55,13 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
       rejected: undefined,
       data: undefined
     };
-
-    this._linkCanvas = this._linkCanvas.bind(this);
   }
 
   /**
    * componentDidMount lifecycle hook
    */
   public componentDidMount(): void {
-    // Ensure _canvasElem is assigned a value
-    this._canvasElem = document.getElementById(this._canvasId) as HTMLCanvasElement;
-
-    if (this.props.datapromise) {
-      this._doPromise(this.props.datapromise);
-    } else {
-      this._initChart(this.props, this.props.data);
-    }
+    this._initChart(this.props, this.props.data);
   }
 
   /**
@@ -85,16 +70,8 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
    * @param nextProps
    */
   public UNSAFE_componentWillReceiveProps(nextProps: IChartControlProps): void {
-    if (nextProps.datapromise !== this.props.datapromise) {
-      this.setState({
-        isLoading: false
-      });
-
-      this._doPromise(nextProps.datapromise);
-    } else {
-      this._destroyChart();
-      this._initChart(nextProps, this.props.data);
-    }
+    this._destroyChart();
+    this._initChart(nextProps, this.props.data);
   }
 
   /**
@@ -118,13 +95,7 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
       accessibility,
       useTheme,
       palette } = this.props;
-    console.log("shouldComponentUpdate", data !== nextProps.data ||
-      options !== nextProps.options ||
-      plugins !== nextProps.plugins ||
-      className !== nextProps.className ||
-      useTheme !== nextProps.useTheme ||
-      palette !== nextProps.palette ||
-      accessibility !== nextProps.accessibility);
+
     return data !== nextProps.data ||
       options !== nextProps.options ||
       plugins !== nextProps.plugins ||
@@ -144,7 +115,6 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
       useTheme,
       options,
       data,
-      key,
       width,
       height
     } = this.props;
@@ -181,11 +151,10 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
           height: height ? height : '100%'
         }}
       >
-        <canvas id={this._canvasId} ref={this._linkCanvas} role='img' aria-label={alternateText} />
+        <canvas ref={this._linkCanvas} role='img' aria-label={alternateText} />
         {
           accessibility.enable === undefined || accessibility.enable ? (
             <AccessibleChartTable
-              key={key ?? `chart-${Guid.newGuid().toString()}`}
               chartType={type}
               data={data || this.state.data}
               chartOptions={options}
@@ -350,8 +319,7 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
     this._chart = new Chart(this._canvasElem, {
       type: type,
       data: data,
-      options: options,
-      plugins: plugins // TODO: remove plugins, they are included in options. Update the properties to reflect this.
+      options: options
     });
   }
 
@@ -382,21 +350,43 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
       Chart.defaults.font.family = styles.defaultFontFamily;
       Chart.defaults.font.size = this._getFontSizeNumber(styles.defaultFontSize);
       Chart.defaults.plugins.title.color = ThemeColorHelper.GetThemeColor(styles.titleColor);
-      Chart.defaults.plugins.title.font["family"] = styles.titleFont;
-      Chart.defaults.plugins.title.font["size"] = this._getFontSizeNumber(styles.titleFontSize);
+      Chart.defaults.plugins.title.font = {
+        ...Chart.defaults.plugins.title.font,
+        family: styles.titleFont
+      };
+      Chart.defaults.plugins.title.font.size = this._getFontSizeNumber(styles.titleFontSize);
       Chart.defaults.plugins.legend.labels.color = ThemeColorHelper.GetThemeColor(styles.legendColor);
-      Chart.defaults.plugins.legend.labels.font["family"] = styles.legendFont;
-      Chart.defaults.plugins.legend.labels.font["size"] = this._getFontSizeNumber(styles.legendFontSize);
+      const legendFont = Chart.defaults.plugins.legend.labels.font as Partial<FontSpec>;
+      if (legendFont) {
+        legendFont.family = styles.legendFont;
+      }
+      if (Chart.defaults.plugins.legend.labels.font) {
+        (Chart.defaults.plugins.legend.labels.font as FontSpec).size = this._getFontSizeNumber(styles.legendFontSize);
+      }
       Chart.defaults.plugins.tooltip.backgroundColor = ThemeColorHelper.GetThemeColor(styles.tooltipBackgroundColor);
       Chart.defaults.plugins.tooltip.bodyColor = ThemeColorHelper.GetThemeColor(styles.tooltipBodyColor);
-      Chart.defaults.plugins.tooltip.bodyFont["family"] = styles.tooltipFont;
-      Chart.defaults.plugins.tooltip.bodyFont["size"] = this._getFontSizeNumber(styles.tooltipFontSize);
+      if (Chart.defaults.plugins.tooltip.bodyFont) {
+        (Chart.defaults.plugins.tooltip.bodyFont as FontSpec).family = styles.tooltipFont;
+      }
+      if (Chart.defaults.plugins.tooltip.bodyFont) {
+        (Chart.defaults.plugins.tooltip.bodyFont as FontSpec).size = this._getFontSizeNumber(styles.tooltipFontSize);
+      }
       Chart.defaults.plugins.tooltip.titleColor = ThemeColorHelper.GetThemeColor(styles.tooltipTitleColor);
-      Chart.defaults.plugins.tooltip.titleFont["family"] = styles.tooltipTitleFont;
-      Chart.defaults.plugins.tooltip.titleFont["size"] = this._getFontSizeNumber(styles.tooltipTitleFontSize);
+      if (Chart.defaults.plugins.tooltip.titleFont) {
+        (Chart.defaults.plugins.tooltip.titleFont as FontSpec).family = styles.tooltipTitleFont;
+      }
+      const titleFont = Chart.defaults.plugins.tooltip.titleFont as FontSpec | undefined;
+      if (titleFont) {
+        titleFont.size = this._getFontSizeNumber(styles.tooltipTitleFontSize);
+      }
       Chart.defaults.plugins.tooltip.footerColor = ThemeColorHelper.GetThemeColor(styles.tooltipFooterColor);
-      Chart.defaults.plugins.tooltip.footerFont["family"] = styles.tooltipFooterFont;
-      Chart.defaults.plugins.tooltip.footerFont["size"] = this._getFontSizeNumber(styles.tooltipFooterFontSize);
+      if (Chart.defaults.plugins.tooltip.footerFont) {
+        (Chart.defaults.plugins.tooltip.footerFont as FontSpec).family = styles.tooltipFooterFont;
+      }
+      const footerFont = Chart.defaults.plugins.tooltip.footerFont as FontSpec | undefined;
+      if (footerFont) {
+        footerFont.size = this._getFontSizeNumber(styles.tooltipFooterFontSize);
+      }
       Chart.defaults.plugins.tooltip.borderColor = ThemeColorHelper.GetThemeColor(styles.tooltipBorderColor);
 
       if (Chart.defaults
@@ -423,7 +413,7 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
   }
 
   private _linkCanvas = (e: HTMLCanvasElement): void => {
-    console.log("_linkCanvas", e);
+    console.log("linkCanvas", e);
     this._canvasElem = e;
   }
 
@@ -436,32 +426,5 @@ export class ChartControl extends React.Component<IChartControlProps, IChartCont
       console.error(error);
       return undefined;
     }
-  }
-
-  /**
-   * Gets the results of a promise and returns it to the chart
-   * @param promise
-   */
-  private _doPromise(promise: Promise<ChartData<ChartType, DefaultDataPoint<ChartType>, unknown>>): void {
-    this.setState({
-      isLoading: true
-    }, () => {
-      promise.then(
-        results => {
-          this.setState({
-            isLoading: false,
-            data: results
-          }, () => {
-            this._initChart(this.props, results);
-          });
-        },
-        rejected => {
-          this.setState({
-            isLoading: false,
-            rejected: rejected
-          });
-        }
-      );
-    });
   }
 }

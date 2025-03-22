@@ -559,13 +559,6 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
     }]
   };
 
-  private _loadAsyncData(): Promise<any> {
-    return new Promise<ChartData>((resolve, reject) => {
-      console.log('_loadAsyncData');
-      resolve(this.chartDataV2);
-    });
-  }
-
   private chartDataV2Bubbles = {
     datasets: [{
       label: '# of Votes',
@@ -1637,11 +1630,30 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
             { key: 'right', text: 'Right' }
           ]} onChange={(ev, option) => this.setState({ chartV2LegendPosition: option.key as any })} />
           <ChartControlV2
+            type={ChartTypeV2.Bar}
+            accessibility={{
+              alternateText: 'Text alternative for this canvas graphic is in the data table below.',
+              summary: 'This is the text alternative for the canvas graphic.',
+              caption: 'Votes for favorite pets'
+            }}
+            data={{
+              labels: ["Dog", "Cat", "Hamster", "Gerbil", "Hedgehog", "Platypus"],
+              datasets: [{
+                label: '# of Votes',
+                data: [12, 19, 3, 5, 2, 3]
+              }]
+            }}
+            options={{
+              scales: {
+                y: {
+                  beginAtZero: true
+                }
+              }
+            }} />
+          <ChartControlV2
             key="testChart-bar"
             type={ChartTypeV2.Bar}
-            //data={this.chartDataV2}
-            // TODO: check how to solve this
-            datapromise={this._loadAsyncData()}
+            data={this.chartDataV2}
             loadingtemplate={() => <div>Please wait...</div>}
             options={{
               plugins: {

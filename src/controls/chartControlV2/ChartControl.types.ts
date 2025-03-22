@@ -32,16 +32,6 @@ export interface IChartControlProps {
   data?: ChartData<ChartType, DefaultDataPoint<ChartType>, unknown>;
 
   /**
-  Promise to the data to be displayed in the chart.
-  ChartControl will automatically display data when
-  promise returns.
-  @type {Promise<ChartData<ChartType, DefaultDataPoint<ChartType>, unknown>>}
-  */
-  datapromise?: Promise<
-    ChartData<ChartType, DefaultDataPoint<ChartType>, unknown>
-  >;
-
-  /**
   If using datapromises, sets the content to display while loading the data.
   @type {JSX.Element | Function}
    */

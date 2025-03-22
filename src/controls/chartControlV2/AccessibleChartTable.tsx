@@ -7,16 +7,10 @@ import { css } from '@fluentui/react/lib/Utilities';
 import { escape } from '@microsoft/sp-lodash-subset';
 
 export class AccessibleChartTable extends React.Component<IAccessibleChartTableProps, IAccessibleChartTableState> {
-  constructor(props: IAccessibleChartTableProps) {
-    super(props);
-
-    //Chart.defaults.datasets.line.showLine = false;
-  }
   public render(): React.ReactElement<IAccessibleChartTableProps> {
     const {
       onRenderTable,
       data,
-      key,
       className
     } = this.props;
 
@@ -34,7 +28,7 @@ export class AccessibleChartTable extends React.Component<IAccessibleChartTableP
     const tableBody: JSX.Element[] = this._renderTableBody();
 
     return (
-      <div key={key} className={css(styles.accessibleTable, className)}>
+      <div className={css(styles.accessibleTable, className)}>
         {tableBody && tableBody.length > 0 ?
           <table >
             {this._renderCaption()}
@@ -95,8 +89,8 @@ export class AccessibleChartTable extends React.Component<IAccessibleChartTableP
     const yAxisLabel: string = chartOptions
       && chartOptions.scales
       && chartOptions.scales.y
-      && chartOptions.scales.y["title"]
-      && chartOptions.scales.y["title"].text;
+      && chartOptions.scales.y?.["title"]
+      && chartOptions.scales.y?.["title"].text;
 
     // Generate the Y header row
     const yHeaderRow: JSX.Element = yAxisLabel
@@ -110,8 +104,8 @@ export class AccessibleChartTable extends React.Component<IAccessibleChartTableP
       chartOptions
       && chartOptions.scales
       && chartOptions.scales.x
-      && chartOptions.scales.x["title"]
-      && chartOptions.scales.x["title"].text;
+      && chartOptions.scales.x?.["title"]
+      && chartOptions.scales.x?.["title"].text;
 
     // Generate the X asix table cells
     const xHeaderCells: JSX.Element[] = datasets.map((dataSet: ChartDataset) => {

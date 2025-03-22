@@ -46,7 +46,7 @@ import { ChartControl, ChartTypeV2 } from '@pnp/spfx-controls-react/lib/ChartCon
 
 ### Compatibility with Chart.js
 
-The majority of Chart.js its options like `data`, `options`, and `type` will work the same way as is -- except that you use TypeScript syntax.
+The majority of Chart.js options like `data`, `options`, and `type` will work the same way as is -- except that you use TypeScript syntax.
 
 To find sample code that you can use, visit the [Chart.Js documentation](https://www.chartjs.org/docs/latest/).
 
@@ -96,8 +96,8 @@ var myChart = new Chart(ctx, {
 You would use the following Typescript code:
 
 ```TypeScript
-<ChartControl 
-  type={ChartType.Bar}
+<ChartControlV2 
+  type={ChartTypeV2.Bar}
   data={{
     labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
     datasets: [{
@@ -147,86 +147,6 @@ The `data` property typically consist of:
 
 See [below](#charttype) for more information on what types of data are required for each type of chart.
 
-### Specifying Data Promises
-
-The ChartControl makes it easy to retrieve data asynchronously with the `datapromise` property.
-
-To use `datapromise`, add a function to your web part that returns a `Promise<Chart.ChartData>` as follows:
-
-```TypeScript
- private _loadAsyncData(): Promise<Chart.ChartData> {
-    return new Promise<Chart.ChartData>((resolve, reject) => {
-      // Call your own service -- this example returns an array of numbers
-      // but you could call
-      const dataProvider: IChartDataProvider = new MockChartDataProvider();
-      dataProvider.getNumberArray().then((numbers: number[]) => {
-        // format your response to ChartData
-        const data: Chart.ChartData =
-        {
-          labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July']
-          datasets: [
-            {
-              label: 'My First dataset',
-              data: numbers
-            }
-          ]
-        };
-
-        // resolve the promise
-        resolve(data);
-      });
-    });
-  }
-```
-
-Then, instead of passing a `data` property, pass your function to the  `datapromise` property, as follows:
-
-```TypeScript
-<ChartControl
-  type='bar'
-  datapromise={this._loadAsyncData()}
-  />
-```
-
-If you want, you provide a template to display until the `datapromise` is resolved, as follows:
-
-```TypeScript
-<ChartControl
-  type='bar'
-  datapromise={this._loadAsyncData()}
-  loadingtemplate={() => <div>Please wait...</div>}
-/>
-```
-
-![Data Promise with Loading Template](../assets/ChartControlDataPromise.gif)
-
-You can provide full React controls within the `loadingtemplate`. For example, to use the Office UI Fabric `Spinner` control, you would use the following code:
-
-```TypeScript
-import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
-...
-<ChartControl
-  type='bar'
-  datapromise={this._loadAsyncData()}
-  loadingtemplate={() => <Spinner size={SpinnerSize.large} label="Loading..."  />}
-/>
-```
-
-![Chart Control Data Promise with Spinner](../assets/ChartControlDataPromiseSpinner.gif)
-
-You can also provide another template to display when the `datapromise` is rejected, as follows:
-
-```TypeScript
-<ChartControl
-  type='bar'
-  datapromise={this._loadAsyncData()}
-    loadingtemplate={() => <Spinner size={SpinnerSize.large} label="Loading..."  />}
-  rejectedtemplate={(error: string) => <div>Something went wrong: {error}</div>}
-/>
-```
-
-![Chart Control Promise with Reject Template](../assets/ChartControlDataPromiseError.gif)
-
 ### Theme Color Support
 
 By default, the ChartControl will attempt to use the environment theme colors and fonts for elements such as the chart background color, grid lines, titles, labels, legends, and tooltips. This includes support for dark themes and high contrast themes.
@@ -238,7 +158,8 @@ If you wish, you can disable the use of themes by setting the `useTheme` propert
 You can also simplify the majority of code samples by omitting the `color` properties; the ChartControl will automatically reproduce the color palette that you would get if you used Office to create the chart.
 
 ```TypeScript
-<ChartControl type={ChartType.Bar}
+<ChartControlV2 
+  type={ChartTypeV2.Bar}
   data={{
     labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
     datasets: [{
@@ -248,11 +169,9 @@ You can also simplify the majority of code samples by omitting the `color` prope
   }}
   options={{
     scales: {
-      yAxes: [{
-        ticks: {
-          beginAtZero:true
-        }
-      }]
+      y: {
+        beginAtZero: true
+      }
     }
   }}
 />
@@ -277,28 +196,27 @@ You can improve the accessible table by adding an `alternateText`, a `caption` a
 For example:
 
 ```TypeScript
-<ChartControl type={ChartType.Bar}
-              accessible={{
-                alternateText: 'Text alternative for this canvas graphic is in the data table below.',
-                summary: 'This is the text alternative for the canvas graphic.',
-                caption: 'Votes for favorite pets'
-              }}
-              data={{
-                    labels: ["Dog", "Cat", "Hamster", "Gerbil", "Hedgehog", "Platypus"],
-                    datasets: [{
-                        label: '# of Votes',
-                        data: [12, 19, 3, 5, 2, 3]
-                    }]
-                }}
-                options={{
-                    scales: {
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero:true
-                            }
-                        }]
-                    }
-                }} />
+<ChartControlV2
+  type={ChartTypeV2.Bar}
+  accessibility={{
+    alternateText: 'Text alternative for this canvas graphic is in the data table below.',
+    summary: 'This is the text alternative for the canvas graphic.',
+    caption: 'Votes for favorite pets'
+  }}
+  data={{
+    labels: ["Dog", "Cat", "Hamster", "Gerbil", "Hedgehog", "Platypus"],
+    datasets: [{
+        label: '# of Votes',
+        data: [12, 19, 3, 5, 2, 3]
+    }]
+  }}
+  options={{
+    scales: {
+      y: {
+        beginAtZero:true
+      }
+    }
+  }} />
 ```
 
 ## Implementation
