@@ -71,6 +71,7 @@
     "adaptivecards-templating": "^2.2.0",
     "animate.css": "^4.1.1",
     "chart.js": "2.9.4",
+    "chart.js-v4": "npm:chart.js@^4.5.0",
     "color": "4.2.3",
     "date-fns": "^2.22.1",
     "he": "^1.2.0",

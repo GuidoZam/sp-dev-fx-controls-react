@@ -168,6 +168,7 @@ import { debounce } from 'lodash';
 import { mergeStyles } from '@fluentui/react/lib/Styling';
 import { sp } from '@pnp/sp';
 import styles from './ControlsTest.module.scss';
+import { ChartTypeV2 } from '../../../controls/chartControlV2/ChartControlV2.types';
 
 //#endregion
 
@@ -179,6 +180,7 @@ const AdaptiveCardHost = React.lazy(() => import('../../../AdaptiveCardHost').th
 const AnimatedDialog = React.lazy(() => import('../../../AnimatedDialog').then(module => ({ default: module.AnimatedDialog })));
 
 const ChartControl = React.lazy(() => import('../../../ChartControl').then(module => ({ default: module.ChartControl })));
+const ChartControlV2 = React.lazy(() => import('../../../controls/chartControlV2').then(module => ({ default: module.ChartControlV2 })));
 
 const AccessibleAccordion = React.lazy(() => import('../../../controls/accessibleAccordion').then(module => ({ default: module.Accordion })));
 
@@ -273,6 +275,8 @@ const TestControl = React.lazy(() => import('./TestControl').then(module => ({ d
 const UserPicker = React.lazy(() => import('../../../UserPicker').then(module => ({ default: module.UserPicker })));
 
 // Used to render document card
+/**
+ * The sample data below was
 /**
  * The sample data below was randomly generated (except for the title). It is used by the grid layout
  */
@@ -1702,6 +1706,44 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
                     }]
                   }
                 }} />
+            </div>
+          }
+          {controlVisibility.ChartControlV2 &&
+            <div id="ChartControlV2Div" className={styles.container}>
+              <React.Suspense fallback={<div>Loading ChartControlV2...</div>}>
+                <ChartControlV2 type={ChartTypeV2.Bar}
+                  data={{
+                    labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+                    datasets: [{
+                      label: '# of Votes',
+                      data: [12, 19, 3, 5, 2, 3],
+                      backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                      ],
+                      borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                      ],
+                      borderWidth: 1
+                    }]
+                  }}
+                  options={{
+                    scales: {
+                      y: {
+                        beginAtZero: true
+                      }
+                    }
+                  }} />
+              </React.Suspense>
             </div>
           }
           {controlVisibility.Map &&

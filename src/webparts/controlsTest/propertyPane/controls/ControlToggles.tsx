@@ -52,7 +52,7 @@ export class ControlToggles extends React.Component<IControlTogglesProps, IContr
         const validControls: ValidControls[] = [
             "all",
             "AccessibleAccordion", "AdaptiveCardDesignerHost", "AdaptiveCardHost",
-            "AnimatedDialog", "Carousel", "ChartControl",
+          "AnimatedDialog", "Carousel", "ChartControl", "ChartControlV2",
             "ComboBoxListItemPicker", "ContentTypePicker", "Dashboard", "DateTimePicker",
             "DragDropFiles", "DynamicForm", "EnhancedThemeProvider",
             "FieldCollectionData", "FieldPicker", "FilePicker",
