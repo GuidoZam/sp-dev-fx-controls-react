@@ -2,13 +2,18 @@ import * as React from 'react';
 import { IChartControlV2State, IChartControlV2Props, ChartPaletteV2, ChartTypeV2 } from './ChartControlV2.types';
 import styles from '../chartControl/ChartControl.module.scss';
 import { css } from '@fluentui/react/lib/Utilities';
-import { Chart, ChartConfiguration, ChartData, ChartDataset, Plugin, CategoryScale, LinearScale, BarElement, BarController } from 'chart.js-v4';
+import { Chart, ChartConfiguration, ChartData, ChartDataset, Plugin, CategoryScale, LinearScale, BarElement, BarController, LineController, LineElement, PointElement, DoughnutController, PieController, RadarController, PolarAreaController, ScatterController, ArcElement, RadialLinearScale } from 'chart.js-v4';
 import { PaletteGenerator } from '../chartControl/PaletteGenerator';
 import { AccessibleChartTable } from '../chartControl/AccessibleChartTable';
 import * as telemetry from '../../common/telemetry';
 import { ThemeColorHelper } from '../../common/utilities/ThemeColorHelper';
 
-Chart.register(CategoryScale, LinearScale, BarElement, BarController);
+Chart.register(
+  CategoryScale, LinearScale, BarElement, BarController,
+  LineController, LineElement, PointElement,
+  DoughnutController, PieController, RadarController, PolarAreaController, ScatterController,
+  ArcElement, RadialLinearScale
+);
 
 function mapPaletteV2ToV1(palette: ChartPaletteV2): number {
   // ChartPaletteV2 and ChartPalette enums have the same order, so direct cast works
