@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { IChartControlV2State, IChartControlV2Props, ChartPaletteV2, ChartTypeV2 } from './ChartControlV2.types';
-import styles from '../chartControl/ChartControl.module.scss';
+import { IChartControlState, IChartControlProps, ChartPalette } from './ChartControl.types';
+import styles from '../chartControlV2/ChartControl.module.scss';
 import { css } from '@fluentui/react/lib/Utilities';
-import { Chart, ChartConfiguration, ChartData, ChartDataset, Plugin, CategoryScale, LinearScale, BarElement, BarController, LineController, LineElement, PointElement, DoughnutController, PieController, RadarController, PolarAreaController, ScatterController, ArcElement, RadialLinearScale } from 'chart.js-v4';
-import { PaletteGenerator } from '../chartControl/PaletteGenerator';
-import { AccessibleChartTable } from '../chartControl/AccessibleChartTable';
+import { Chart, ChartConfiguration, ChartData, ChartDataset, CategoryScale, LinearScale, BarElement, BarController, LineController, LineElement, PointElement, DoughnutController, PieController, RadarController, PolarAreaController, ScatterController, ArcElement, RadialLinearScale, ChartTypeRegistry } from 'chart.js-v4';
+import { PaletteGenerator } from './PaletteGenerator';
+import { AccessibleChartTable } from './AccessibleChartTable';
 import * as telemetry from '../../common/telemetry';
 import { ThemeColorHelper } from '../../common/utilities/ThemeColorHelper';
 
@@ -15,18 +15,13 @@ Chart.register(
   ArcElement, RadialLinearScale
 );
 
-function mapPaletteV2ToV1(palette: ChartPaletteV2): number {
-  // ChartPaletteV2 and ChartPalette enums have the same order, so direct cast works
-  return palette as unknown as number;
-}
-
-export class ChartControlV2 extends React.Component<IChartControlV2Props, IChartControlV2State> {
-  public static defaultProps: Partial<IChartControlV2Props> = {
+export class ChartControlV2 extends React.Component<IChartControlProps, IChartControlState> {
+  public static defaultProps: Partial<IChartControlProps> = {
     accessibility: {
       enable: true
     },
     useTheme: true,
-    palette: ChartPaletteV2.OfficeColorful1,
+    palette: ChartPalette.OfficeColorful1,
     options: {
       responsive: true,
       maintainAspectRatio: true
@@ -36,7 +31,7 @@ export class ChartControlV2 extends React.Component<IChartControlV2Props, IChart
   private _chart: Chart;
   private _canvasElem: HTMLCanvasElement = undefined;
 
-  constructor(props: IChartControlV2Props) {
+  constructor(props: IChartControlProps) {
     super(props);
     telemetry.track('ReactChartComponentV2', {
       type: !!props.type,
@@ -59,7 +54,7 @@ export class ChartControlV2 extends React.Component<IChartControlV2Props, IChart
     }
   }
 
-  public UNSAFE_componentWillReceiveProps(nextProps: IChartControlV2Props): void {
+  public UNSAFE_componentWillReceiveProps(nextProps: IChartControlProps): void {
     if (nextProps.datapromise !== this.props.datapromise) {
       this.setState({
         isLoading: false
@@ -75,18 +70,17 @@ export class ChartControlV2 extends React.Component<IChartControlV2Props, IChart
     this._destroyChart();
   }
 
-  public shouldComponentUpdate(nextProps: IChartControlV2Props, nextState: IChartControlV2State): boolean {
-    const { data, options, plugins, className, accessibility, useTheme, palette } = this.props;
+  public shouldComponentUpdate(nextProps: IChartControlProps, nextState: IChartControlState): boolean {
+    const { data, options, className, accessibility, useTheme, palette } = this.props;
     return data !== nextProps.data ||
       options !== nextProps.options ||
-      plugins !== nextProps.plugins ||
       className !== nextProps.className ||
       useTheme !== nextProps.useTheme ||
       palette !== nextProps.palette ||
       accessibility !== nextProps.accessibility;
   }
 
-  public render(): React.ReactElement<IChartControlV2Props> {
+  public render(): React.ReactElement<IChartControlProps> {
     const { type, accessibility, useTheme, options, data } = this.props;
     if (this.state.isLoading) {
       if (this.props.loadingtemplate) {
@@ -113,9 +107,9 @@ export class ChartControlV2 extends React.Component<IChartControlV2Props, IChart
         {
           accessibility.enable === undefined || accessibility.enable ? (
             <AccessibleChartTable
-              chartType={type as any}
-              data={(data || this.state.data) as any}
-              chartOptions={options as any}
+              chartType={type}
+              data={((data || this.state.data) as unknown) as any}
+              chartOptions={(options as unknown) as any}
               className={accessibility.className}
               caption={accessibility.caption}
               summary={accessibility.summary}
@@ -159,18 +153,35 @@ export class ChartControlV2 extends React.Component<IChartControlV2Props, IChart
     return this._chart.getElementsAtEventForMode(e, mode, options, false);
   }
 
-  private _initChart(props: IChartControlV2Props, data: ChartData): void {
-    const { options, type, plugins, useTheme } = props;
+  private _initChart(props: IChartControlProps, data: ChartData): void {
+    const { options, type, useTheme } = props;
     this._applyDatasetPalette(data);
     if (useTheme) {
       this._applyChartThemes();
     }
     if (this._canvasElem) {
+      // Merge all Chart.js v4 options, supporting top-level and plugins
+      const chartOptions = {
+        ...options,
+        plugins: options?.plugins,
+        layout: {
+          ...((options && options.layout) || {})
+        },
+        scales: {
+          ...((options && options.scales) || {})
+        },
+        animation: {
+          ...((options && options.animation) || {})
+        },
+        responsive: options?.responsive ?? true,
+        maintainAspectRatio: options?.maintainAspectRatio ?? true
+      };
+      // Chart.js expects lowercase type strings
+      const chartType = typeof type === 'string' ? type.toLowerCase() : type;
       const config: ChartConfiguration = {
-        type: type as any, // ChartType may need to be mapped for v4
+        type: chartType as keyof ChartTypeRegistry,
         data: data,
-        options: options,
-        plugins: (plugins as Plugin[]) // Cast to Plugin type
+        options: chartOptions,
       };
       this._chart = new Chart(this._canvasElem.getContext('2d'), config);
     }
@@ -184,7 +195,7 @@ export class ChartControlV2 extends React.Component<IChartControlV2Props, IChart
           if (dataset.backgroundColor === undefined) {
             const datasetLength: number = (dataset.data as number[] | undefined)?.length ?? 0;
             if (datasetLength) {
-              dataset.backgroundColor = PaletteGenerator.GetPalette(mapPaletteV2ToV1(this.props.palette), datasetLength);
+              dataset.backgroundColor = PaletteGenerator.GetPalette(this.props.palette, datasetLength);
             }
           }
         });
@@ -216,14 +227,6 @@ export class ChartControlV2 extends React.Component<IChartControlV2Props, IChart
 
   private _linkCanvas = (e: HTMLCanvasElement): void => {
     this._canvasElem = e;
-  }
-
-  private _getFontSizeNumber(value: string): number {
-    try {
-      return parseInt(value.replace('px', ''), 10);
-    } catch {
-      return undefined;
-    }
   }
 
   private _doPromise(promise: Promise<ChartData>): void {

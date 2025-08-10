@@ -1,29 +1,28 @@
-import { Chart, ChartConfiguration, ChartData, ChartOptions, ChartDataset, Plugin } from 'chart.js-v4';
+import { Chart, ChartData, ChartOptions } from 'chart.js-v4';
 
-export interface IChartControlV2Props {
-  accessibility?: IChartAccessibilityV2;
+export interface IChartControlProps {
+  accessibility?: IChartAccessibility;
   data?: ChartData;
   datapromise?: Promise<ChartData>;
   loadingtemplate?: JSX.Element | (() => JSX.Element | undefined);
   rejectedtemplate?: JSX.Element | ((rejected: {}) => JSX.Element | undefined);
   options?: ChartOptions;
-  type: ChartTypeV2;
+  type: ChartType;
   className?: string;
-  palette?: ChartPaletteV2;
-  plugins?: Plugin[];
+  palette?: ChartPalette;
   useTheme?: boolean;
   onClick?(event?: MouseEvent, activeElements?: Array<{}>): void;
   onHover?(chart: Chart, event: MouseEvent, activeElements: Array<{}>): void;
   onResize?(chart: Chart, newSize: { width: number; height: number }): void;
 }
 
-export interface IChartControlV2State {
+export interface IChartControlState {
   isLoading: boolean;
   data?: ChartData;
   rejected?: {};
 }
 
-export enum ChartPaletteV2 {
+export enum ChartPalette {
   OfficeColorful1,
   OfficeColorful2,
   OfficeColorful3,
@@ -43,7 +42,7 @@ export enum ChartPaletteV2 {
   OfficeMonochromatic13
 }
 
-export interface IChartAccessibilityV2 {
+export interface IChartAccessibility {
   enable?: boolean;
   className?: string;
   caption?: string;
@@ -52,15 +51,15 @@ export interface IChartAccessibilityV2 {
   onRenderTable?: () => JSX.Element;
 }
 
-export type ChartTypeV2 = 'line' | 'bar' | 'radar' | 'doughnut' | 'polarArea' | 'bubble' | 'pie' | 'scatter';
+export type ChartType = 'line' | 'bar' | 'radar' | 'doughnut' | 'polarArea' | 'bubble' | 'pie' | 'scatter';
 
-export const ChartTypeV2 = {
-  Line: 'line' as ChartTypeV2,
-  Bar: 'bar' as ChartTypeV2,
-  Radar: 'radar' as ChartTypeV2,
-  Doughnut: 'doughnut' as ChartTypeV2,
-  PolarArea: 'polarArea' as ChartTypeV2,
-  Bubble: 'bubble' as ChartTypeV2,
-  Pie: 'pie' as ChartTypeV2,
-  Scatter: 'scatter' as ChartTypeV2
+export const ChartType = {
+  Line: 'line' as ChartType,
+  Bar: 'bar' as ChartType,
+  Radar: 'radar' as ChartType,
+  Doughnut: 'doughnut' as ChartType,
+  PolarArea: 'polarArea' as ChartType,
+  Bubble: 'bubble' as ChartType,
+  Pie: 'pie' as ChartType,
+  Scatter: 'scatter' as ChartType,
 };
