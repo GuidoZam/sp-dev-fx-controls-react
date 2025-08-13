@@ -2,8 +2,22 @@ declare var define: any;
 
 define([], () => {
   return {
+  CalendarControlDayOfWeekSunday: "Sunday",
   TermSertNaviagtionErrorMessage: "TermSet not found",
   TermSetNavigationNoTerms: "No terms defined",
+  worldMapCoord: "Coord:",
+  worldMapE: "° E",
+  worldMapFlag: "flag",
+  worldMapFoundLabel: "found",
+  worldMapLoadintText: "Loading map style…",
+  worldMapLocationLabel: "location",
+  worldMapN: "° N",
+  worldMapResetMap: "Reset map",
+  worldMapSearchField: "name",
+  worldMapSearchLocations: "Search locations...",
+  worldMapTitle: "World Map",
+  worldMapZoomContent: "Zoom in",
+  worldMapZoomIn: "Zoom in",
   "Save": "Glābt",
   "Cancel": "Atcelt",
   "SiteBreadcrumbLabel": "Website atpakaļceļa",
